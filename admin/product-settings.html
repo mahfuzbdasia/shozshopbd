@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Settings — SOHOZ SHOP BD Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot"></span> SOHOZ SHOP BD Admin</div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard.html">Dashboard</a>
+      <a href="/admin/products.html">Products</a>
+      <a href="/admin/product-settings.html" class="active">Product Settings</a>
+      <a href="/admin/settings.html">Settings</a>
+      <a href="/admin/checkout-settings.html">Checkout Settings</a>
+      <a href="/admin/orders.html">Orders</a>
+      <a href="/admin/customers.html">Customers</a>
+      <a href="/admin/coupons.html">Coupons</a>
+      <a href="/admin/banners.html">Banners</a>
+      <a href="/admin/messages.html">Messages</a>
+    </nav>
+    <div class="sidebar-foot"><div class="who">Signed in as <strong id="admin-who">Admin</strong></div><button class="logout-btn" id="logout-btn">Log out</button></div>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-topbar"><div><h1>Product Settings</h1><p>Control how product badges appear across the storefront.</p></div></div>
+    <div class="panel settings-panel">
+      <div class="panel-head"><div><h3>Product Badge</h3><p class="settings-help">Show automatic Sale, New, and New Sale badges on product images.</p></div></div>
+      <form id="badge-settings-form">
+        <label class="settings-toggle"><input type="checkbox" id="badge-enabled"><span><strong>Enable Product Badge</strong><small>When disabled, all product badges are hidden.</small></span></label>
+        <div class="field"><label for="badge-position">Badge position</label><select id="badge-position"><option value="top-left">Top Left (default)</option><option value="overlay">Overlay on the product image</option><option value="pill">Premium pill design</option></select></div>
+        <div class="badge-reference"><h4>Badge types and colors</h4><div><span class="preview-badge preview-sale">Sale</span><span>Sale · #D32F2F</span></div><div><span class="preview-badge preview-new">New</span><span>New · #0F766E</span></div><div><span class="preview-badge preview-new-sale">New Sale</span><span>New Sale · Gold gradient</span></div></div>
+        <button type="submit" class="btn btn-primary">Save settings</button>
+      </form>
+    </div>
+  </main>
+</div>
+<script src="/admin/js/admin-common.js"></script>
+<script>
+AdminAuth.requireAuth();
+const form = document.getElementById('badge-settings-form');
+const enabled = document.getElementById('badge-enabled');
+const position = document.getElementById('badge-position');
+
+async function loadSettings() {
+  try {
+    const settings = await adminFetch('/api/settings/product-badges');
+    enabled.checked = settings.enabled;
+    position.value = settings.position;
+  } catch (err) { showToast(err.message, true); }
+}
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  try {
+    await adminFetch('/api/settings/product-badges', {
+      method: 'PUT',
+      body: JSON.stringify({ enabled: enabled.checked, position: position.value }),
+    });
+    showToast('Product badge settings saved');
+  } catch (err) { showToast(err.message, true); }
+});
+loadSettings();
+</script>
+</body>
+</html>

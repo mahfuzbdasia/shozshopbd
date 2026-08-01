@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — SOHOZ SHOP BD Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot"></span> SOHOZ SHOP BD Admin</div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard.html">Dashboard</a>
+      <a href="/admin/products.html">Products</a>
+      <a href="/admin/product-settings.html">Product Settings</a>
+      <a href="/admin/settings.html" class="active">Settings</a>
+      <a href="/admin/checkout-settings.html">Checkout Settings</a>
+      <a href="/admin/orders.html">Orders</a>
+      <a href="/admin/customers.html">Customers</a>
+      <a href="/admin/coupons.html">Coupons</a>
+      <a href="/admin/banners.html">Banners</a>
+      <a href="/admin/messages.html">Messages</a>
+    </nav>
+    <div class="sidebar-foot"><div class="who">Signed in as <strong id="admin-who">Admin</strong></div><button class="logout-btn" id="logout-btn">Log out</button></div>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-topbar"><div><h1>Settings</h1><p>Manage your admin account security and preferences.</p></div></div>
+
+    <div class="panel settings-panel">
+      <div class="panel-head"><div><h3>Change Admin Password</h3><p class="settings-help">Update the login password for the current admin account.</p></div></div>
+      <form id="password-form" class="stack" style="display:grid;gap:12px;max-width:460px;">
+        <label class="field"><span>Current password</span><input type="password" name="currentPassword" required></label>
+        <label class="field"><span>New password</span><input type="password" name="newPassword" minlength="8" required></label>
+        <label class="field"><span>Confirm new password</span><input type="password" name="confirmPassword" minlength="8" required></label>
+        <button type="submit" class="btn btn-primary">Update password</button>
+        <div id="password-feedback" class="form-note" style="min-height:1.2em;"></div>
+      </form>
+    </div>
+
+    <div class="panel settings-panel">
+      <div class="panel-head"><div><h3>Integration Settings</h3><p class="settings-help">Connect analytics, notifications, and catalog feeds for your storefront.</p></div></div>
+      <form id="integration-settings-form" class="stack" style="display:grid;gap:12px;max-width:640px;">
+        <label class="field"><span>Google Tag Manager ID</span><input type="text" name="gtmId" placeholder="GTM-XXXXXXX"></label>
+        <label class="field"><span>Google Analytics ID</span><input type="text" name="gaId" placeholder="G-XXXXXXXXXX"></label>
+        <label class="field"><span>Google Search Console</span><input type="text" name="searchConsole" placeholder="Verification code or site property"></label>
+        <label class="field"><span>Facebook Catalog Feed URL</span><div style="display:flex;gap:8px;align-items:center;"><input id="facebook-feed-url" type="text" readonly style="flex:1;" value=""><button type="button" id="copy-feed-url" class="btn btn-outline" style="padding:0 14px;white-space:nowrap;">Copy</button></div><small class="settings-help">Use this single feed URL in Facebook Catalog. Product updates and removals will appear automatically.</small></label>
+        <label class="field"><span>Telegram Notification</span><input type="text" name="telegramNotification" placeholder="Bot token / chat ID"></label>
+        <label class="field"><span>Email Notification</span><input type="email" name="emailNotification" placeholder="notify@yourdomain.com"></label>
+        <label class="field"><span>Pixel / Your Site</span><input type="text" name="pixelSite" placeholder="Pixel ID or site tag"></label>
+        <button type="submit" class="btn btn-primary">Save integration settings</button>
+        <div id="integration-feedback" class="form-note" style="min-height:1.2em;"></div>
+      </form>
+    </div>
+  </main>
+</div>
+<script src="/admin/js/admin-common.js"></script>
+<script>
+AdminAuth.requireAuth();
+
+const passwordForm = document.getElementById('password-form');
+const passwordFeedback = document.getElementById('password-feedback');
+if (passwordForm) {
+  passwordForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formElements = passwordForm.elements;
+    const submitBtn = passwordForm.querySelector('button[type="submit"]');
+    const payload = {
+      currentPassword: formElements.currentPassword.value,
+      newPassword: formElements.newPassword.value,
+      confirmPassword: formElements.confirmPassword.value,
+    };
+    passwordFeedback.textContent = '';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Updating...';
+    try {
+      await adminFetch('/api/auth/change-password', { method: 'POST', body: JSON.stringify(payload) });
+      passwordFeedback.textContent = 'Password updated successfully.';
+      passwordFeedback.style.color = 'var(--pine)';
+      passwordForm.reset();
+    } catch (err) {
+      passwordFeedback.textContent = err.message;
+      passwordFeedback.style.color = 'var(--danger)';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Update password';
+    }
+  });
+}
+
+const facebookFeedInput = document.getElementById('facebook-feed-url');
+const copyFeedBtn = document.getElementById('copy-feed-url');
+const integrationForm = document.getElementById('integration-settings-form');
+const integrationFeedback = document.getElementById('integration-feedback');
+
+if (facebookFeedInput) {
+  facebookFeedInput.value = `${window.location.origin}/api/facebook-catalog.xml`;
+}
+
+async function loadIntegrationSettings() {
+  try {
+    const settings = await adminFetch('/api/settings/integrations');
+    integrationForm.gtmId.value = settings.gtmId || '';
+    integrationForm.gaId.value = settings.gaId || '';
+    integrationForm.searchConsole.value = settings.searchConsole || '';
+    integrationForm.telegramNotification.value = settings.telegramNotification || '';
+    integrationForm.emailNotification.value = settings.emailNotification || '';
+    integrationForm.pixelSite.value = settings.pixelSite || '';
+    if (facebookFeedInput) {
+      facebookFeedInput.value = `${window.location.origin}/api/facebook-catalog.xml`;
+    }
+  } catch (err) {
+    showToast(err.message, true);
+  }
+}
+
+if (integrationForm) {
+  integrationForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    integrationFeedback.textContent = '';
+    const payload = {
+      gtmId: integrationForm.gtmId.value,
+      gaId: integrationForm.gaId.value,
+      searchConsole: integrationForm.searchConsole.value,
+      telegramNotification: integrationForm.telegramNotification.value,
+      emailNotification: integrationForm.emailNotification.value,
+      pixelSite: integrationForm.pixelSite.value,
+    };
+    try {
+      await adminFetch('/api/settings/integrations', { method: 'PUT', body: JSON.stringify(payload) });
+      if (facebookFeedInput) {
+        facebookFeedInput.value = `${window.location.origin}/api/facebook-catalog.xml`;
+      }
+      integrationFeedback.textContent = 'Integration settings saved.';
+      integrationFeedback.style.color = 'var(--pine)';
+    } catch (err) {
+      integrationFeedback.textContent = err.message;
+      integrationFeedback.style.color = 'var(--danger)';
+    }
+  });
+}
+
+if (copyFeedBtn && facebookFeedInput) {
+  copyFeedBtn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(facebookFeedInput.value);
+      showToast('Feed URL copied');
+    } catch (err) {
+      facebookFeedInput.select();
+      document.execCommand('copy');
+      showToast('Feed URL copied');
+    }
+  });
+}
+
+loadIntegrationSettings();
+</script>
+</body>
+</html>

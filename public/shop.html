@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop All Watches — SOHOZ SHOP BD</title>
+<meta name="description" content="Browse the full SOHOZ SHOP BD collection: 20 automatic, quartz and chronograph watches across classic, diver, sport and minimalist styles. Filter by category, sort by price.">
+<link rel="canonical" href="https://SOHOZ SHOP BD-watches.example.com/shop.html">
+<meta name="robots" content="index, follow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="container">
+    <a href="/" class="brand"><span class="dot"></span> SOHOZ SHOP BD</a>
+    <nav class="nav-links" id="nav-links">
+      <a href="/">Home</a>
+      <a href="/shop.html" class="active">Shop</a>
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/order-tracking.html">Track Order</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="/cart.html" class="icon-btn" aria-label="View cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></svg>
+        <span class="cart-count" data-cart-count>0</span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="page-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="/">Home</a> / Shop</div>
+    <h1>All watches</h1>
+  </div>
+</div>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="shop-toolbar">
+      <div class="filter-bar" id="filter-chips"></div>
+      <div class="shop-controls">
+        <input type="search" id="shop-search" placeholder="Search watches…" class="field">
+        <select id="sort-select" class="field">
+          <option value="newest">Newest</option>
+          <option value="price_asc">Price: low to high</option>
+          <option value="price_desc">Price: high to low</option>
+          <option value="rating">Top rated</option>
+          <option value="name">Name A–Z</option>
+        </select>
+      </div>
+    </div>
+    <p class="form-note" id="result-count" style="margin-bottom:16px;"></p>
+    <div class="product-grid" id="product-grid"></div>
+    <div class="empty-state hidden" id="empty-state">
+      <h3>No watches match those filters</h3>
+      <p>Try clearing your search or choosing a different category.</p>
+      <a href="/shop.html" class="btn btn-outline">Reset filters</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">SOHOZ SHOP BD</div>
+        <p>Considered watches for people who notice details. Designed in-house, shipped nationwide across Bangladesh.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Shop</h5>
+        <ul><li><a href="/shop.html">All watches</a></li><li><a href="/shop.html?category=Classic">Classic</a></li><li><a href="/shop.html?category=Diver">Diver</a></li><li><a href="/shop.html?filter=new">New arrivals</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul><li><a href="/about.html">About SOHOZ SHOP BD</a></li><li><a href="/contact.html">Contact us</a></li><li><a href="/faq.html">FAQ</a></li><li><a href="/order-tracking.html">Track an order</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h5>Newsletter</h5>
+        <p style="margin:0 0 4px;">New references, straight to your inbox.</p>
+        <form class="newsletter-form"><input type="email" placeholder="you@email.com" required aria-label="Email address"><button type="submit">Join</button></form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year></span> SOHOZ SHOP BD Watches. All rights reserved.</span>
+      <span><a href="/faq.html">FAQ</a> · <a href="/contact.html">Support</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/utils.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/product-badges.js"></script>
+<script src="/js/shop.js"></script>
+</body>
+</html>

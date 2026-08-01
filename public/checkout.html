@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — SOHOZ SHOP BD</title>
+<meta name="description" content="Complete your SOHOZ SHOP BD order with nationwide shipping and cash on delivery.">
+<meta name="robots" content="noindex, follow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header class="site-nav">
+  <div class="container">
+    <a href="/" class="brand"><span class="dot"></span> SOHOZ SHOP BD</a>
+    <nav class="nav-links" id="nav-links"><a href="/">Home</a><a href="/shop.html">Shop</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/order-tracking.html">Track Order</a></nav>
+    <div class="nav-actions">
+      <a href="/cart.html" class="icon-btn" aria-label="View cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></svg>
+        <span class="cart-count" data-cart-count>0</span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="page-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="/">Home</a> / <a href="/cart.html">Cart</a> / Checkout</div>
+    <h1>Checkout</h1>
+  </div>
+</div>
+
+<section class="section-tight">
+  <div class="container checkout-layout">
+    <div>
+      <div class="alert" id="checkout-alert"></div>
+      <form id="checkout-form">
+        <h3 style="margin-bottom:18px;">Shipping details</h3>
+        <div class="field"><label for="co-name">Full name</label><input id="co-name" name="name" required></div>
+        <div class="field"><label for="co-phone">Phone number</label><input id="co-phone" name="phone" type="tel" required></div>
+        <div class="field"><label for="co-address">Delivery address</label><textarea id="co-address" name="address" rows="3" required></textarea></div>
+        <div class="field">
+          <label for="co-city">City / District</label>
+          <div class="city-picker" data-city-picker>
+            <input id="co-city" name="city" autocomplete="address-level2" spellcheck="false" required aria-autocomplete="list" aria-expanded="false" aria-controls="city-dropdown" placeholder="Select your city">
+            <button type="button" class="city-picker-toggle" aria-label="Open city picker">▾</button>
+            <div class="city-picker-dropdown" id="city-dropdown" role="listbox" aria-label="Cities and districts">
+              <div class="city-picker-search">
+                <input type="text" id="city-search-input" placeholder="Search your city..." aria-label="Search your city">
+              </div>
+              <div class="city-picker-options" id="city-options"></div>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin:30px 0 16px;">Payment method</h3>
+        <div class="payment-options">
+          <label class="payment-option"><input type="radio" name="payment_method" value="Cash on Delivery" checked> Cash on delivery</label>
+        </div>
+        <p class="form-note">Pay in cash when your order is delivered.</p>
+
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top:10px;">Place order</button>
+      </form>
+
+      <div class="success-panel hidden" id="checkout-success">
+        <div class="icon">✓</div>
+        <h2>Order placed</h2>
+        <p style="color:var(--ink-soft);margin:12px 0 6px;">Order number</p>
+        <p class="price" style="font-size:1.3rem;" id="success-order-no"></p>
+        <p style="color:var(--ink-soft);margin:18px 0 6px;">Total charged</p>
+        <p class="price" style="font-size:1.1rem;" id="success-total"></p>
+        <div style="display:flex;gap:14px;justify-content:center;margin-top:30px;flex-wrap:wrap;">
+          <a href="/order-tracking.html" class="btn btn-outline">Track this order</a>
+          <a href="/shop.html" class="btn btn-primary">Continue shopping</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-card" id="checkout-summary-card">
+      <h3>Order summary</h3>
+      <div id="checkout-items" style="margin-bottom:16px;"></div>
+      <div class="coupon-row">
+        <input type="text" id="coupon-code" placeholder="Coupon code" class="field" style="border:1px solid var(--line-strong);padding:11px 12px;">
+        <button type="button" class="btn btn-outline btn-sm" id="apply-coupon">Apply</button>
+      </div>
+      <p class="form-note" id="coupon-msg" style="margin-top:-6px;"></p>
+      <div class="summary-row"><span>Subtotal</span><span class="price" id="co-subtotal">৳0</span></div>
+      <div class="summary-row hidden" id="co-discount-row"><span>Discount</span><span class="price" id="co-discount">৳0</span></div>
+      <div class="summary-row"><span>Shipping</span><span class="price" id="co-shipping">Free</span></div>
+      <div class="summary-row total"><span>Total</span><span class="price" id="co-total">৳0</span></div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div><div class="footer-brand">SOHOZ SHOP BD</div><p>Considered watches for people who notice details. Designed in-house, shipped nationwide across Bangladesh.</p></div>
+      <div class="footer-col"><h5>Shop</h5><ul><li><a href="/shop.html">All watches</a></li><li><a href="/shop.html?category=Classic">Classic</a></li><li><a href="/shop.html?category=Diver">Diver</a></li><li><a href="/shop.html?filter=new">New arrivals</a></li></ul></div>
+      <div class="footer-col"><h5>Company</h5><ul><li><a href="/about.html">About SOHOZ SHOP BD</a></li><li><a href="/contact.html">Contact us</a></li><li><a href="/faq.html">FAQ</a></li><li><a href="/order-tracking.html">Track an order</a></li></ul></div>
+      <div class="footer-col"><h5>Newsletter</h5><p style="margin:0 0 4px;">New references, straight to your inbox.</p><form class="newsletter-form"><input type="email" placeholder="you@email.com" required aria-label="Email address"><button type="submit">Join</button></form></div>
+    </div>
+    <div class="footer-bottom"><span>© <span data-year></span> SOHOZ SHOP BD Watches. All rights reserved.</span><span><a href="/faq.html">FAQ</a> · <a href="/contact.html">Support</a></span></div>
+  </div>
+</footer>
+
+<script src="/js/utils.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/checkout.js"></script>
+</body>
+</html>

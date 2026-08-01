@@ -1,0 +1,5 @@
+node_modules/
+server/db/kairos.db
+server/db/kairos.db-shm
+server/db/kairos.db-wal
+.env

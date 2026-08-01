@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /cart.html
+Disallow: /checkout.html
+
+Sitemap: https://SohozShopBD-watches.example.com/sitemap.xml

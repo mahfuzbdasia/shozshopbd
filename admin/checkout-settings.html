@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout Settings — SOHOZ SHOP BD Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot"></span> SOHOZ SHOP BD Admin</div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard.html">Dashboard</a><a href="/admin/products.html">Products</a><a href="/admin/product-settings.html">Product Settings</a><a href="/admin/settings.html">Settings</a><a href="/admin/checkout-settings.html" class="active">Checkout Settings</a><a href="/admin/orders.html">Orders</a><a href="/admin/customers.html">Customers</a><a href="/admin/coupons.html">Coupons</a><a href="/admin/banners.html">Banners</a><a href="/admin/messages.html">Messages</a>
+    </nav>
+    <div class="sidebar-foot"><div class="who">Signed in as <strong id="admin-who">Admin</strong></div><button class="logout-btn" id="logout-btn">Log out</button></div>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-topbar"><div><h1>Checkout Settings</h1><p>Control delivery location verification and the Bangladesh city directory.</p></div></div>
+    <div class="panel settings-panel">
+      <form id="checkout-settings-form">
+        <label class="settings-toggle"><input type="checkbox" id="enable-map"><span><strong>Enable Delivery Map</strong><small>Show the verified delivery map above payment.</small></span></label>
+        <label class="settings-toggle"><input type="checkbox" id="enable-verification"><span><strong>Enable Address Verification</strong><small>Require a successful geocode before an order can be placed.</small></span></label>
+        <div class="field"><label for="map-provider">Map provider</label><select id="map-provider"><option value="openstreetmap">OpenStreetMap</option><option value="google">Google Maps</option></select></div>
+        <div class="field"><label for="map-key">Google Maps API key</label><input id="map-key" type="password" placeholder="Optional for Google Maps"></div>
+        <div class="field-row"><div class="field"><label for="map-lat">Default latitude</label><input id="map-lat" type="number" step="any"></div><div class="field"><label for="map-lon">Default longitude</label><input id="map-lon" type="number" step="any"></div></div>
+        <div class="field"><label for="map-zoom">Default zoom level</label><input id="map-zoom" type="number" min="1" max="18"></div>
+        <div class="field"><label for="city-list">Cities / districts</label><textarea id="city-list" rows="8" placeholder="One city or district per line"></textarea></div>
+        <button type="submit" class="btn btn-primary">Save checkout settings</button>
+      </form>
+    </div>
+
+  </main>
+</div>
+<script src="/admin/js/admin-common.js"></script>
+<script>
+AdminAuth.requireAuth();
+const form = document.getElementById('checkout-settings-form');
+const fields = { map: document.getElementById('enable-map'), verification: document.getElementById('enable-verification'), provider: document.getElementById('map-provider'), key: document.getElementById('map-key'), lat: document.getElementById('map-lat'), lon: document.getElementById('map-lon'), zoom: document.getElementById('map-zoom'), cities: document.getElementById('city-list') };
+async function loadSettings() {
+  try {
+    const settings = await adminFetch('/api/settings/checkout');
+    fields.map.checked = settings.enableMap; fields.verification.checked = settings.enableVerification; fields.provider.value = settings.provider;
+    fields.lat.value = settings.center.lat; fields.lon.value = settings.center.lon; fields.zoom.value = settings.zoom; fields.cities.value = (settings.cities || []).join('\n');
+  } catch (err) { showToast(err.message, true); }
+}
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  try {
+    await adminFetch('/api/settings/checkout', { method: 'PUT', body: JSON.stringify({
+      enableMap: fields.map.checked, enableVerification: fields.verification.checked, provider: fields.provider.value, apiKey: fields.key.value,
+      center: { lat: Number(fields.lat.value), lon: Number(fields.lon.value) }, zoom: Number(fields.zoom.value), cities: fields.cities.value.split('\n'),
+    }) });
+    fields.key.value = '';
+    showToast('Checkout settings saved');
+  } catch (err) { showToast(err.message, true); }
+});
+
+loadSettings();
+</script>
+</body>
+</html>

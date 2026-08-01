@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coupons — SOHOZ SHOP BD Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot"></span> SOHOZ SHOP BD Admin</div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg> Dashboard</a>
+      <a href="/admin/products.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg> Products</a>
+      <a href="/admin/orders.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/></svg> Orders</a>
+      <a href="/admin/customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg> Customers</a>
+      <a href="/admin/coupons.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6M2 7h20v5H2zM12 22V7"/></svg> Coupons</a>
+      <a href="/admin/banners.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 21h8M12 16v5"/></svg> Banners</a>
+      <a href="/admin/messages.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> Messages</a>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="who">Signed in as <strong id="admin-who">Admin</strong></div>
+      <button class="logout-btn" id="logout-btn">Log out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div><h1>Coupons</h1><p>Discount codes customers can apply at checkout.</p></div>
+      <button class="btn btn-primary" id="new-coupon-btn">+ New coupon</button>
+    </div>
+
+    <div class="panel">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Min order</th><th>Used</th><th>Status</th><th></th></tr></thead>
+          <tbody id="coupons-body"><tr class="empty-row"><td colspan="7">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay hidden" id="coupon-modal">
+  <div class="modal">
+    <div class="modal-head"><h3 id="cm-title">New coupon</h3><button class="modal-close" id="cm-close">&times;</button></div>
+    <form id="coupon-form">
+      <input type="hidden" id="cf-id">
+      <div class="field"><label for="cf-code">Code</label><input id="cf-code" required style="text-transform:uppercase;" placeholder="SAVE10"></div>
+      <div class="field-row">
+        <div class="field"><label for="cf-type">Type</label><select id="cf-type"><option value="percent">Percent off</option><option value="flat">Flat amount off (৳)</option></select></div>
+        <div class="field"><label for="cf-value">Value</label><input id="cf-value" type="number" min="1" required></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label for="cf-min">Minimum order (৳)</label><input id="cf-min" type="number" min="0" value="0"></div>
+        <div class="field"><label for="cf-max-uses">Max uses (0 = unlimited)</label><input id="cf-max-uses" type="number" min="0" value="0"></div>
+      </div>
+      <div class="check-row"><label><input type="checkbox" id="cf-active" checked> Active</label></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Save coupon</button>
+    </form>
+  </div>
+</div>
+
+<script src="/admin/js/admin-common.js"></script>
+<script>
+AdminAuth.requireAuth();
+let allCoupons = [];
+
+function row(c) {
+  return `
+    <tr>
+      <td class="mono">${c.code}</td>
+      <td>${c.type === 'percent' ? 'Percent' : 'Flat'}</td>
+      <td class="mono">${c.type === 'percent' ? c.value + '%' : fmtBDT(c.value)}</td>
+      <td class="mono">${fmtBDT(c.min_order)}</td>
+      <td>${c.used_count}${c.max_uses ? ' / ' + c.max_uses : ''}</td>
+      <td><span class="badge badge-${c.is_active ? 'active' : 'inactive'}">${c.is_active ? 'Active' : 'Disabled'}</span></td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-action" data-edit="${c.id}" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+          <button class="icon-action" data-delete="${c.id}" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V6h10Z"/></svg></button>
+        </div>
+      </td>
+    </tr>`;
+}
+function render() { document.getElementById('coupons-body').innerHTML = allCoupons.length ? allCoupons.map(row).join('') : '<tr class="empty-row"><td colspan="7">No coupons yet.</td></tr>'; }
+
+async function load() {
+  try { allCoupons = await adminFetch('/api/coupons'); render(); }
+  catch (err) { showToast(err.message, true); }
+}
+
+const modal = document.getElementById('coupon-modal');
+const form = document.getElementById('coupon-form');
+function openModal(c) {
+  form.reset();
+  document.getElementById('cm-title').textContent = c ? `Edit ${c.code}` : 'New coupon';
+  document.getElementById('cf-id').value = c ? c.id : '';
+  document.getElementById('cf-code').value = c ? c.code : '';
+  document.getElementById('cf-type').value = c ? c.type : 'percent';
+  document.getElementById('cf-value').value = c ? c.value : '';
+  document.getElementById('cf-min').value = c ? c.min_order : 0;
+  document.getElementById('cf-max-uses').value = c ? c.max_uses : 0;
+  document.getElementById('cf-active').checked = c ? !!c.is_active : true;
+  modal.classList.remove('hidden');
+}
+document.getElementById('new-coupon-btn').addEventListener('click', () => openModal(null));
+document.getElementById('cm-close').addEventListener('click', () => modal.classList.add('hidden'));
+modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = document.getElementById('cf-id').value;
+  const payload = {
+    code: document.getElementById('cf-code').value,
+    type: document.getElementById('cf-type').value,
+    value: Number(document.getElementById('cf-value').value),
+    min_order: Number(document.getElementById('cf-min').value),
+    max_uses: Number(document.getElementById('cf-max-uses').value),
+    is_active: document.getElementById('cf-active').checked,
+  };
+  try {
+    if (id) await adminFetch(`/api/coupons/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+    else await adminFetch('/api/coupons', { method: 'POST', body: JSON.stringify(payload) });
+    modal.classList.add('hidden');
+    showToast('Coupon saved');
+    load();
+  } catch (err) { showToast(err.message, true); }
+});
+
+document.getElementById('coupons-body').addEventListener('click', (e) => {
+  const editBtn = e.target.closest('[data-edit]');
+  const delBtn = e.target.closest('[data-delete]');
+  if (editBtn) openModal(allCoupons.find((c) => c.id === Number(editBtn.dataset.edit)));
+  else if (delBtn) {
+    if (!confirm('Delete this coupon?')) return;
+    adminFetch(`/api/coupons/${delBtn.dataset.delete}`, { method: 'DELETE' }).then(() => { showToast('Coupon deleted'); load(); }).catch((err) => showToast(err.message, true));
+  }
+});
+
+load();
+</script>
+</body>
+</html>

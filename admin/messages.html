@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Messages — SOHOZ SHOP BD Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot"></span> SOHOZ SHOP BD Admin</div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg> Dashboard</a>
+      <a href="/admin/products.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg> Products</a>
+      <a href="/admin/orders.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/></svg> Orders</a>
+      <a href="/admin/customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg> Customers</a>
+      <a href="/admin/coupons.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6M2 7h20v5H2zM12 22V7"/></svg> Coupons</a>
+      <a href="/admin/banners.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 21h8M12 16v5"/></svg> Banners</a>
+      <a href="/admin/messages.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> Messages</a>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="who">Signed in as <strong id="admin-who">Admin</strong></div>
+      <button class="logout-btn" id="logout-btn">Log out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div><h1>Messages</h1><p>Submissions from the contact form.</p></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h3 id="msg-count">Inbox</h3></div>
+      <div id="messages-list"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h3>Newsletter subscribers</h3></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Email</th><th>Subscribed</th></tr></thead>
+          <tbody id="subs-body"><tr class="empty-row"><td colspan="2">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/admin/js/admin-common.js"></script>
+<script>
+AdminAuth.requireAuth();
+
+function msgCard(m) {
+  return `
+    <div class="panel" style="margin-bottom:12px;border-left:3px solid ${m.is_read ? 'var(--line-strong)' : 'var(--pine)'};">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+        <strong>${m.name}</strong>
+        <span class="mono" style="font-size:.76rem;color:var(--ink-soft);">${fmtDate(m.created_at)}</span>
+      </div>
+      <p style="font-size:.82rem;color:var(--ink-soft);margin:0 0 10px;">${m.email} · ${m.subject || 'General'}</p>
+      <p style="font-size:.9rem;margin:0 0 12px;">${m.message}</p>
+      ${!m.is_read ? `<button class="btn btn-outline btn-sm" data-read="${m.id}">Mark as read</button>` : '<span class="badge badge-active">Read</span>'}
+    </div>`;
+}
+
+async function loadMessages() {
+  try {
+    const messages = await adminFetch('/api/contact');
+    document.getElementById('msg-count').textContent = `Inbox — ${messages.filter(m => !m.is_read).length} unread of ${messages.length}`;
+    document.getElementById('messages-list').innerHTML = messages.length ? messages.map(msgCard).join('') : '<p style="color:var(--ink-soft);">No messages yet.</p>';
+  } catch (err) { showToast(err.message, true); }
+}
+document.getElementById('messages-list').addEventListener('click', async (e) => {
+  const btn = e.target.closest('[data-read]');
+  if (!btn) return;
+  try { await adminFetch(`/api/contact/${btn.dataset.read}/read`, { method: 'PUT' }); loadMessages(); }
+  catch (err) { showToast(err.message, true); }
+});
+
+async function loadSubs() {
+  try {
+    const subs = await adminFetch('/api/newsletter');
+    document.getElementById('subs-body').innerHTML = subs.length ? subs.map(s => `<tr><td>${s.email}</td><td>${fmtDate(s.created_at)}</td></tr>`).join('') : '<tr class="empty-row"><td colspan="2">No subscribers yet.</td></tr>';
+  } catch (err) { showToast(err.message, true); }
+}
+
+loadMessages();
+loadSubs();
+</script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banners — SOHOZ SHOP BD Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot"></span> SOHOZ SHOP BD Admin</div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg> Dashboard</a>
+      <a href="/admin/products.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg> Products</a>
+      <a href="/admin/orders.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/></svg> Orders</a>
+      <a href="/admin/customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg> Customers</a>
+      <a href="/admin/coupons.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6M2 7h20v5H2zM12 22V7"/></svg> Coupons</a>
+      <a href="/admin/banners.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 21h8M12 16v5"/></svg> Banners</a>
+      <a href="/admin/messages.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> Messages</a>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="who">Signed in as <strong id="admin-who">Admin</strong></div>
+      <button class="logout-btn" id="logout-btn">Log out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div><h1>Banners</h1><p>Control the homepage promo strip shown between sections.</p></div>
+      <button class="btn btn-primary" id="new-banner-btn">+ New banner</button>
+    </div>
+
+    <div class="panel">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Position</th><th>Title</th><th>Subtitle</th><th>CTA</th><th>Status</th><th></th></tr></thead>
+          <tbody id="banners-body"><tr class="empty-row"><td colspan="6">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay hidden" id="banner-modal">
+  <div class="modal">
+    <div class="modal-head"><h3 id="bm-title">New banner</h3><button class="modal-close" id="bm-close">&times;</button></div>
+    <form id="banner-form">
+      <input type="hidden" id="bf-id">
+      <div class="field"><label for="bf-title">Title</label><input id="bf-title" required></div>
+      <div class="field"><label for="bf-subtitle">Subtitle</label><textarea id="bf-subtitle" rows="2"></textarea></div>
+      <div class="field-row">
+        <div class="field"><label for="bf-cta-label">CTA label</label><input id="bf-cta-label" placeholder="Shop now"></div>
+        <div class="field"><label for="bf-cta-link">CTA link</label><input id="bf-cta-link" placeholder="/shop.html"></div>
+      </div>
+      <div class="field"><label for="bf-position">Position (order)</label><input id="bf-position" type="number" value="1"></div>
+      <div class="check-row"><label><input type="checkbox" id="bf-active" checked> Active</label></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Save banner</button>
+    </form>
+  </div>
+</div>
+
+<script src="/admin/js/admin-common.js"></script>
+<script>
+AdminAuth.requireAuth();
+let allBanners = [];
+
+function row(b) {
+  return `
+    <tr>
+      <td>${b.position}</td><td>${b.title}</td><td>${(b.subtitle || '').slice(0, 50)}</td><td>${b.cta_label || '—'}</td>
+      <td><span class="badge badge-${b.is_active ? 'active' : 'inactive'}">${b.is_active ? 'Active' : 'Hidden'}</span></td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-action" data-edit="${b.id}" title="Edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+          <button class="icon-action" data-delete="${b.id}" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-1 0v14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V6h10Z"/></svg></button>
+        </div>
+      </td>
+    </tr>`;
+}
+function render() { document.getElementById('banners-body').innerHTML = allBanners.length ? allBanners.map(row).join('') : '<tr class="empty-row"><td colspan="6">No banners yet.</td></tr>'; }
+
+async function load() {
+  try { allBanners = await adminFetch('/api/banners/all'); render(); }
+  catch (err) { showToast(err.message, true); }
+}
+
+const modal = document.getElementById('banner-modal');
+const form = document.getElementById('banner-form');
+function openModal(b) {
+  form.reset();
+  document.getElementById('bm-title').textContent = b ? `Edit banner` : 'New banner';
+  document.getElementById('bf-id').value = b ? b.id : '';
+  document.getElementById('bf-title').value = b ? b.title : '';
+  document.getElementById('bf-subtitle').value = b ? b.subtitle : '';
+  document.getElementById('bf-cta-label').value = b ? b.cta_label : '';
+  document.getElementById('bf-cta-link').value = b ? b.cta_link : '';
+  document.getElementById('bf-position').value = b ? b.position : (allBanners.length + 1);
+  document.getElementById('bf-active').checked = b ? !!b.is_active : true;
+  modal.classList.remove('hidden');
+}
+document.getElementById('new-banner-btn').addEventListener('click', () => openModal(null));
+document.getElementById('bm-close').addEventListener('click', () => modal.classList.add('hidden'));
+modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = document.getElementById('bf-id').value;
+  const payload = {
+    title: document.getElementById('bf-title').value,
+    subtitle: document.getElementById('bf-subtitle').value,
+    cta_label: document.getElementById('bf-cta-label').value,
+    cta_link: document.getElementById('bf-cta-link').value,
+    position: Number(document.getElementById('bf-position').value),
+    is_active: document.getElementById('bf-active').checked,
+  };
+  try {
+    if (id) await adminFetch(`/api/banners/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+    else await adminFetch('/api/banners', { method: 'POST', body: JSON.stringify(payload) });
+    modal.classList.add('hidden');
+    showToast('Banner saved');
+    load();
+  } catch (err) { showToast(err.message, true); }
+});
+
+document.getElementById('banners-body').addEventListener('click', (e) => {
+  const editBtn = e.target.closest('[data-edit]');
+  const delBtn = e.target.closest('[data-delete]');
+  if (editBtn) openModal(allBanners.find((b) => b.id === Number(editBtn.dataset.edit)));
+  else if (delBtn) {
+    if (!confirm('Delete this banner?')) return;
+    adminFetch(`/api/banners/${delBtn.dataset.delete}`, { method: 'DELETE' }).then(() => { showToast('Banner deleted'); load(); }).catch((err) => showToast(err.message, true));
+  }
+});
+
+load();
+</script>
+</body>
+</html>

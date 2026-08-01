@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login — SOHOZ SHOP BD</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-brand"><span class="dot"></span> SOHOZ SHOP BD Admin</div>
+    <p class="login-sub">Sign in to manage products, orders and the storefront.</p>
+    <div class="alert" id="login-alert" style="display:none;background:#FBEBE9;color:var(--danger);padding:12px 14px;border-radius:3px;font-size:.85rem;margin-bottom:16px;"></div>
+    <form id="login-form">
+      <div class="field"><label for="email">Email</label><input id="email" type="email" required value="admin@sohozshopbd.com"></div>
+      <div class="field"><label for="password">Password</label><input id="password" type="password" required></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Sign in</button>
+    </form>
+    <div class="login-hint">Use the administrator account configured for this store. If you are setting up the site for the first time, update the default credentials after signing in.</div>
+  </div>
+</div>
+<script>
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const alertBox = document.getElementById('login-alert');
+  alertBox.style.display = 'none';
+  const btn = e.target.querySelector('button');
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: document.getElementById('email').value, password: document.getElementById('password').value }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Login failed');
+    localStorage.setItem('SohozShopBD_admin_token', data.token);
+    localStorage.setItem('SohozShopBD_admin_info', JSON.stringify(data.admin));
+    window.location.href = '/admin/dashboard.html';
+  } catch (err) {
+    alertBox.textContent = err.message;
+    alertBox.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Sign in';
+  }
+});
+if (localStorage.getItem('SohozShopBD_admin_token')) window.location.href = '/admin/dashboard.html';
+</script>
+</body>
+</html>
