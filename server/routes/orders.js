@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../db/database');
 const { requireAdmin } = require('../middleware/auth');
 const { escapeHtml, sanitizeText, sanitizeUrl } = require('../utils/security');
+const { calculateDeliveryCharge, isValidDistrict } = require('../utils/delivery');
 
 function genOrderNo() {
   const y = new Date().getFullYear();
@@ -18,8 +19,8 @@ router.post('/', (req, res) => {
   const shippingAddress = sanitizeText(b.shipping_address || '').slice(0, 500);
   const city = sanitizeText(b.city || '').slice(0, 120);
   const customerEmail = sanitizeText(b.customer_email || '').trim().toLowerCase() || `guest-${Date.now()}@local.invalid`;
-  if (!customerName || !customerPhone || !shippingAddress || !Array.isArray(b.items) || b.items.length === 0) {
-    return res.status(400).json({ error: 'Name, phone, address and at least one item are required.' });
+  if (!customerName || !customerPhone || !shippingAddress || !Array.isArray(b.items) || b.items.length === 0 || !isValidDistrict(city)) {
+    return res.status(400).json({ error: 'Name, phone, address, and a valid City / District are required.' });
   }
   const checkoutSettings = db.prepare('SELECT value FROM settings WHERE key = ?').get('checkout_settings');
   let locationSettings = { enableVerification: true };
@@ -33,9 +34,23 @@ router.post('/', (req, res) => {
   let subtotal = 0;
   const items = [];
   for (const it of b.items) {
-    const product = db.prepare('SELECT * FROM products WHERE id = ? AND is_active = 1').get(it?.id);
-    if (!product) continue;
-    const qty = Math.max(1, Number(it?.qty) || 1);
+    if (!it || typeof it !== 'object' || !Number.isFinite(Number(it.id))) {
+      return res.status(400).json({ error: 'One or more cart items are invalid.' });
+    }
+    const product = db.prepare('SELECT * FROM products WHERE id = ? AND is_active = 1').get(Number(it.id));
+    if (!product) {
+      return res.status(400).json({ error: 'One or more cart items are unavailable.' });
+    }
+    const qty = Number(it.qty);
+    if (!Number.isFinite(qty) || qty < 1) {
+      return res.status(400).json({ error: `Invalid quantity for ${product.name}.` });
+    }
+    if (product.stock <= 0) {
+      return res.status(400).json({ error: `Product "${product.name}" is out of stock.` });
+    }
+    if (qty > product.stock) {
+      return res.status(400).json({ error: `Only ${product.stock} available for ${product.name}.` });
+    }
     subtotal += product.price * qty;
     items.push({ id: product.id, name: escapeHtml(product.name), sku: product.sku, price: product.price, qty, image: sanitizeUrl(product.image, { allowRelative: true }) || '/images/products/meridian-steel.svg' });
   }
@@ -52,7 +67,8 @@ router.post('/', (req, res) => {
     }
   }
 
-  const shippingFee = subtotal - discount >= 10000 ? 0 : 120;
+  const deliveryCharge = calculateDeliveryCharge(city);
+  const shippingFee = deliveryCharge;
   const total = subtotal - discount + shippingFee;
 
   // upsert customer
@@ -69,11 +85,11 @@ router.post('/', (req, res) => {
   const orderNo = genOrderNo();
   const info = db.prepare(`
     INSERT INTO orders (order_no, customer_id, customer_name, customer_email, customer_phone, shipping_address, city,
-      latitude, longitude, place_id, formatted_address, google_maps_url, postal_code, division, country, items_json, subtotal, discount, shipping_fee, total, coupon_code, payment_method)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      delivery_district, delivery_charge, latitude, longitude, place_id, formatted_address, google_maps_url, postal_code, division, country, items_json, subtotal, discount, shipping_fee, total, coupon_code, payment_method)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     orderNo, customer.id, escapeHtml(customerName), customerEmail, escapeHtml(customerPhone), escapeHtml(shippingAddress), escapeHtml(city),
-    latitude, longitude, sanitizeText(b.place_id || '').slice(0, 200), escapeHtml(sanitizeText(b.formatted_address || '').slice(0, 500)), sanitizeUrl(b.google_maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${latitude},${longitude}`)}`), sanitizeText(b.postal_code || '').slice(0, 40), escapeHtml(sanitizeText(b.division || '').slice(0, 80)), escapeHtml(sanitizeText(b.country || '').slice(0, 80)), JSON.stringify(items), subtotal, discount, shippingFee, total, couponCode, 'Cash on Delivery'
+    escapeHtml(city), deliveryCharge, latitude, longitude, sanitizeText(b.place_id || '').slice(0, 200), escapeHtml(sanitizeText(b.formatted_address || '').slice(0, 500)), sanitizeUrl(b.google_maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${latitude},${longitude}`)}`), sanitizeText(b.postal_code || '').slice(0, 40), escapeHtml(sanitizeText(b.division || '').slice(0, 80)), escapeHtml(sanitizeText(b.country || '').slice(0, 80)), JSON.stringify(items), subtotal, discount, shippingFee, total, couponCode, 'Cash on Delivery'
   );
 
   // decrement stock

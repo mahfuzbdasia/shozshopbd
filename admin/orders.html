@@ -138,7 +138,8 @@ document.getElementById('orders-body').addEventListener('click', (e) => {
     <div style="margin-top:16px;font-size:.88rem;display:flex;flex-direction:column;gap:6px;">
       <div style="display:flex;justify-content:space-between;"><span>Subtotal</span><span class="mono">${fmtBDT(o.subtotal)}</span></div>
       ${o.discount ? `<div style="display:flex;justify-content:space-between;"><span>Discount ${o.coupon_code ? '('+o.coupon_code+')' : ''}</span><span class="mono">−${fmtBDT(o.discount)}</span></div>` : ''}
-      <div style="display:flex;justify-content:space-between;"><span>Shipping</span><span class="mono">${o.shipping_fee ? fmtBDT(o.shipping_fee) : 'Free'}</span></div>
+      <div style="display:flex;justify-content:space-between;"><span>Delivery District</span><span class="mono">${o.delivery_district || o.city || 'Unspecified'}</span></div>
+      <div style="display:flex;justify-content:space-between;"><span>Delivery Charge</span><span class="mono">${o.delivery_charge ? fmtBDT(o.delivery_charge) : 'Free'}</span></div>
       <div style="display:flex;justify-content:space-between;font-weight:700;"><span>Total</span><span class="mono">${fmtBDT(o.total)}</span></div>
     </div>
   `;

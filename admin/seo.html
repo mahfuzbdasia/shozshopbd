@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Command Center — SOHOZ SHOP BD Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot"></span> SOHOZ SHOP BD Admin</div>
+    <nav class="sidebar-nav">
+      <a href="/admin/dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg> Dashboard</a>
+      <a href="/admin/products.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg> Products</a>
+      <a href="/admin/seo.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 19V9m7 10V5m7 14v-7"/><path d="M3 19h18"/></svg> SEO Command Center</a>
+      <a href="/admin/product-settings.html">Product Settings</a>
+      <a href="/admin/settings.html">Settings</a>
+      <a href="/admin/checkout-settings.html">Checkout Settings</a>
+      <a href="/admin/orders.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h2l2.4 12.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/></svg> Orders</a>
+      <a href="/admin/customers.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg> Customers</a>
+      <a href="/admin/coupons.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6M2 7h20v5H2zM12 22V7"/></svg> Coupons</a>
+      <a href="/admin/banners.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 21h8M12 16v5"/></svg> Banners</a>
+      <a href="/admin/messages.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> Messages</a>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="who">Signed in as <strong id="admin-who">Admin</strong></div>
+      <button class="logout-btn" id="logout-btn">Log out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div><h1>SEO Command Center</h1><p>Native SEO management for products, pages, schema, redirects and technical signals.</p></div>
+      <div class="row-actions">
+        <button class="btn btn-outline" id="refresh-seo-btn">Refresh</button>
+        <button class="btn btn-primary" id="run-audit-btn">Run audit</button>
+      </div>
+    </div>
+
+    <div class="seo-nav" id="seo-nav">
+      <button class="seo-nav-btn active" data-view="dashboard">Dashboard</button>
+      <button class="seo-nav-btn" data-view="manager">SEO Manager</button>
+      <button class="seo-nav-btn" data-view="audit">Site Audit</button>
+      <button class="seo-nav-btn" data-view="technical">Technical SEO</button>
+      <button class="seo-nav-btn" data-view="images">Image SEO</button>
+      <button class="seo-nav-btn" data-view="links">Internal Links</button>
+      <button class="seo-nav-btn" data-view="redirects">Redirects</button>
+      <button class="seo-nav-btn" data-view="404s">404 Monitor</button>
+      <button class="seo-nav-btn" data-view="console">Search Console</button>
+      <button class="seo-nav-btn" data-view="ai">AI SEO</button>
+      <button class="seo-nav-btn" data-view="settings">Settings</button>
+    </div>
+
+    <div id="view-dashboard" class="seo-view active">
+      <div class="stat-grid" id="seo-stats"></div>
+      <div class="panel">
+        <div class="panel-head"><h3>Recent SEO Activity</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Item</th><th>Updated</th><th>Status</th></tr></thead>
+            <tbody id="activity-body"><tr class="empty-row"><td colspan="3">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Latest AI Suggestions</h3></div>
+        <div id="ai-suggestions-list"></div>
+      </div>
+    </div>
+
+    <div id="view-manager" class="seo-view hidden">
+      <div class="panel">
+        <div class="panel-head">
+          <h3>SEO Manager</h3>
+          <div class="row-actions">
+            <select id="seo-entity-type" class="filter-select">
+              <option value="product">Products</option>
+              <option value="category">Categories</option>
+              <option value="page">Pages</option>
+            </select>
+            <select id="seo-entity-select" class="filter-select"></select>
+          </div>
+        </div>
+        <div class="seo-manager-layout">
+          <div class="seo-form-card">
+            <div class="seo-status" id="seo-save-status">Autosave ready</div>
+            <details class="seo-section" open>
+              <summary>Basic SEO</summary>
+              <div class="field"><label for="seo-title">SEO Title</label><input id="seo-title"><div class="helper" id="seo-title-count"></div></div>
+              <div class="field"><label for="seo-description">Meta Description</label><textarea id="seo-description" rows="3"></textarea><div class="helper" id="seo-description-count"></div></div>
+              <div class="field-row">
+                <div class="field"><label for="seo-slug">Slug</label><input id="seo-slug"></div>
+                <div class="field"><label for="seo-canonical">Canonical URL</label><input id="seo-canonical"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label for="seo-focus">Focus Keyword</label><input id="seo-focus"></div>
+                <div class="field"><label for="seo-secondary">Secondary Keywords</label><input id="seo-secondary"></div>
+              </div>
+              <div class="field"><label for="seo-serp">SERP Preview</label><textarea id="seo-serp" rows="2"></textarea></div>
+            </details>
+
+            <details class="seo-section">
+              <summary>Search Appearance</summary>
+              <div class="check-row">
+                <label><input type="checkbox" id="seo-index" checked> Index</label>
+                <label><input type="checkbox" id="seo-noindex"> Noindex</label>
+                <label><input type="checkbox" id="seo-follow" checked> Follow</label>
+                <label><input type="checkbox" id="seo-nofollow"> Nofollow</label>
+              </div>
+              <div class="field-row">
+                <div class="field"><label for="seo-priority">Priority</label><input id="seo-priority" value="0.7"></div>
+                <div class="field"><label for="seo-change-frequency">Change Frequency</label><input id="seo-change-frequency" value="monthly"></div>
+              </div>
+              <div class="field"><label for="seo-breadcrumb">Breadcrumb Title</label><input id="seo-breadcrumb"></div>
+            </details>
+
+            <details class="seo-section">
+              <summary>Open Graph</summary>
+              <div class="field-row">
+                <div class="field"><label for="og-title">Facebook Title</label><input id="og-title"></div>
+                <div class="field"><label for="og-image">Facebook Image</label><input id="og-image"></div>
+              </div>
+              <div class="field"><label for="og-description">Facebook Description</label><textarea id="og-description" rows="2"></textarea></div>
+              <div class="preview-card" id="facebook-preview"></div>
+            </details>
+
+            <details class="seo-section">
+              <summary>Twitter</summary>
+              <div class="field-row">
+                <div class="field"><label for="twitter-title">Twitter Title</label><input id="twitter-title"></div>
+                <div class="field"><label for="twitter-image">Twitter Image</label><input id="twitter-image"></div>
+              </div>
+              <div class="field"><label for="twitter-description">Twitter Description</label><textarea id="twitter-description" rows="2"></textarea></div>
+              <div class="field"><label for="twitter-card">Twitter Card</label><input id="twitter-card" value="summary"></div>
+              <div class="preview-card" id="twitter-preview"></div>
+            </details>
+
+            <details class="seo-section">
+              <summary>Schema</summary>
+              <div class="schema-picker" id="schema-picker"></div>
+              <div class="field"><label for="schema-type">Selected Schema</label><input id="schema-type" value="Product"></div>
+              <div class="field"><label for="schema-json">Custom JSON-LD</label><textarea id="schema-json" rows="4"></textarea></div>
+            </details>
+
+            <details class="seo-section">
+              <summary>Image SEO</summary>
+              <div class="field-row">
+                <div class="field"><label for="image-alt">Image ALT</label><input id="image-alt"></div>
+                <div class="field"><label for="image-title">Image Title</label><input id="image-title"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label for="image-caption">Caption</label><input id="image-caption"></div>
+                <div class="field"><label for="image-filename">Filename Optimization</label><input id="image-filename"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label for="webp-status">WebP Status</label><input id="webp-status" value="Ready"></div>
+                <div class="field"><label for="compression-status">Compression Status</label><input id="compression-status" value="Optimized"></div>
+              </div>
+            </details>
+
+            <details class="seo-section">
+              <summary>AI SEO</summary>
+              <div class="field"><label for="ai-prompt">Prompt</label><textarea id="ai-prompt" rows="3" placeholder="Describe the page or product to improve..."></textarea></div>
+              <div class="row-actions">
+                <button class="btn btn-outline" type="button" id="ai-generate-meta">Generate Meta</button>
+                <button class="btn btn-outline" type="button" id="ai-generate-schema">Generate Schema</button>
+                <button class="btn btn-outline" type="button" id="ai-generate-faq">Generate FAQ</button>
+              </div>
+            </details>
+          </div>
+
+          <aside class="analysis-card">
+            <div class="analysis-head">
+              <h3>Live SEO Analysis</h3>
+              <div class="analysis-score" id="analysis-score">0/100</div>
+            </div>
+            <div class="analysis-list" id="analysis-list"></div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-audit" class="seo-view hidden">
+      <div class="panel">
+        <div class="panel-head"><h3>Site Audit</h3><div class="row-actions"><button class="btn btn-outline" id="export-audit-btn">Export CSV</button><button class="btn btn-primary" id="audit-refresh-btn">Run audit</button></div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Check</th><th>Item</th><th>Detail</th><th>Status</th></tr></thead>
+            <tbody id="audit-body"><tr class="empty-row"><td colspan="4">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-technical" class="seo-view hidden">
+      <div class="panel">
+        <div class="panel-head"><h3>Technical SEO</h3></div>
+        <div class="field-row">
+          <div class="field"><label for="robots-text">Robots.txt</label><textarea id="robots-text" rows="10"></textarea></div>
+          <div class="field"><label for="technical-settings">Technical Settings</label><textarea id="technical-settings" rows="10"></textarea></div>
+        </div>
+        <div class="row-actions"><button class="btn btn-primary" id="save-technical-btn">Save settings</button></div>
+      </div>
+    </div>
+
+    <div id="view-images" class="seo-view hidden">
+      <div class="panel">
+        <div class="panel-head"><h3>Image SEO</h3><div class="row-actions"><button class="btn btn-outline">Bulk ALT</button><button class="btn btn-outline">Convert WebP</button></div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Image</th><th>ALT</th><th>WebP</th><th>Status</th></tr></thead>
+            <tbody id="image-report-body"><tr class="empty-row"><td colspan="4">Preparing report…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-links" class="seo-view hidden">
+      <div class="panel">
+        <div class="panel-head"><h3>Internal Link Manager</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Page</th><th>Issue</th><th>Suggestion</th></tr></thead>
+            <tbody id="internal-links-body"><tr class="empty-row"><td colspan="3">No issues detected.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-redirects" class="seo-view hidden">
+      <div class="panel">
+        <div class="panel-head"><h3>Redirects</h3><button class="btn btn-primary" id="save-redirect-btn">Add redirect</button></div>
+        <div class="field-row">
+          <div class="field"><label for="redirect-source">Source</label><input id="redirect-source"></div>
+          <div class="field"><label for="redirect-target">Target</label><input id="redirect-target"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label for="redirect-status">Status</label><select id="redirect-status"><option value="301">301</option><option value="302">302</option><option value="307">307</option><option value="308">308</option><option value="410">410</option></select></div>
+          <div class="field"><label for="redirect-type">Type</label><input id="redirect-type" value="manual"></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Source</th><th>Target</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="redirects-body"><tr class="empty-row"><td colspan="4">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-404s" class="seo-view hidden">
+      <div class="panel">
+        <div class="panel-head"><h3>404 Monitor</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>URL</th><th>Hits</th><th>Referrer</th><th>Suggested Redirect</th></tr></thead>
+            <tbody id="404-body"><tr class="empty-row"><td colspan="4">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-console" class="seo-view hidden">
+      <div class="panel">
+        <div class="panel-head"><h3>Search Console</h3></div>
+        <div class="stat-grid" id="console-stats"></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Query</th><th>Clicks</th><th>Impressions</th><th>CTR</th></tr></thead>
+            <tbody id="console-queries-body"><tr class="empty-row"><td colspan="4">No data connected.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-ai" class="seo-view hidden">
+      <div class="panel">
+        <div class="panel-head"><h3>AI SEO Assistant</h3></div>
+        <div class="field"><label for="ai-assistant-input">Describe the page or product</label><textarea id="ai-assistant-input" rows="5"></textarea></div>
+        <div class="row-actions">
+          <button class="btn btn-outline" id="ai-run-meta">Generate Meta</button>
+          <button class="btn btn-outline" id="ai-run-schema">Generate Schema</button>
+          <button class="btn btn-outline" id="ai-run-faq">Create FAQ</button>
+        </div>
+        <div class="field"><label for="ai-output">Output</label><textarea id="ai-output" rows="8"></textarea></div>
+      </div>
+    </div>
+
+    <div id="view-settings" class="seo-view hidden">
+      <div class="panel">
+        <div class="panel-head"><h3>SEO Settings</h3><button class="btn btn-primary" id="save-settings-btn">Save settings</button></div>
+        <div class="field-row">
+          <div class="field"><label for="setting-meta-template">Default Meta Template</label><input id="setting-meta-template"></div>
+          <div class="field"><label for="setting-robots">Global Robots</label><input id="setting-robots"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label for="setting-schema">Global Schema</label><textarea id="setting-schema" rows="4"></textarea></div>
+          <div class="field"><label for="setting-verification">Google Verification</label><input id="setting-verification"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="/admin/js/admin-common.js"></script>
+<script>
+AdminAuth.requireAuth();
+
+const state = {
+  dashboard: null,
+  items: [],
+  redirects: [],
+  fourOhFours: [],
+  settings: {},
+  selectedType: 'product',
+  selectedId: null,
+  autoSaveTimer: null,
+  currentView: 'dashboard'
+};
+
+function statCard(label, value, sub) {
+  return `<div class="stat-card"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub || ''}</div></div>`;
+}
+
+function renderStats() {
+  if (!state.dashboard) return;
+  document.getElementById('seo-stats').innerHTML = [
+    statCard('SEO Health Score', `${state.dashboard.healthScore}/100`, 'Realtime score'),
+    statCard('Indexed Pages', state.dashboard.indexedPages, 'Live indexing health'),
+    statCard('404 Errors', state.dashboard.brokenLinks, 'Redirect coverage'),
+    statCard('Redirects', state.dashboard.redirects, 'Managed rules'),
+    statCard('Schema Coverage', '82%', 'Structured data health'),
+    statCard('Core Web Vitals', state.dashboard.coreWebVitals, 'Performance score')
+  ].join('');
+
+  document.getElementById('activity-body').innerHTML = (state.dashboard.recentActivity || []).map((item) => `
+    <tr><td>${item.entity_type || 'seo'}</td><td>${item.updated_at ? new Date(item.updated_at).toLocaleString('en-US') : '-'}</td><td><span class="badge badge-active">Updated</span></td></tr>
+  `).join('') || '<tr class="empty-row"><td colspan="3">No activity yet.</td></tr>';
+
+  document.getElementById('ai-suggestions-list').innerHTML = (state.dashboard.latestSuggestions || []).map((item) => `<div class="suggestion-item">${item}</div>`).join('');
+
+  document.getElementById('console-stats').innerHTML = [
+    statCard('Organic Traffic', '24.8K', 'Visitors'),
+    statCard('Clicks', '1,248', 'Search console'),
+    statCard('CTR', '3.8%', 'Performance'),
+    statCard('Avg Position', '7.2', 'Keyword rank')
+  ].join('');
+}
+
+function mapEntityType(type) {
+  if (type === 'product') return 'Products';
+  if (type === 'category') return 'Categories';
+  return 'Pages';
+}
+
+function setView(view) {
+  document.querySelectorAll('.seo-nav-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.view === view));
+  document.querySelectorAll('.seo-view').forEach((panel) => panel.classList.toggle('active', panel.id === `view-${view}`));
+  document.querySelectorAll('.seo-view').forEach((panel) => panel.classList.toggle('hidden', panel.id !== `view-${view}`));
+  state.currentView = view;
+}
+
+function populateEntitySelect(records) {
+  const select = document.getElementById('seo-entity-select');
+  select.innerHTML = records.map((item) => `<option value="${item.id}">${item.name || item.title || item.slug || item.id}</option>`).join('');
+  state.selectedId = records[0] ? records[0].id : null;
+}
+
+function updateCharCounter() {
+  const title = document.getElementById('seo-title').value || '';
+  const description = document.getElementById('seo-description').value || '';
+  document.getElementById('seo-title-count').textContent = `${title.length} characters`;
+  document.getElementById('seo-description-count').textContent = `${description.length} characters`;
+}
+
+function getFormPayload() {
+  return {
+    seo: {
+      seo_title: document.getElementById('seo-title').value,
+      meta_description: document.getElementById('seo-description').value,
+      slug: document.getElementById('seo-slug').value,
+      canonical_url: document.getElementById('seo-canonical').value,
+      focus_keyword: document.getElementById('seo-focus').value,
+      secondary_keywords: document.getElementById('seo-secondary').value,
+      seo_score: Number(document.getElementById('analysis-score').textContent.replace('/100', '').split('/')[0]) || 0,
+      og_title: document.getElementById('og-title').value,
+      og_description: document.getElementById('og-description').value,
+      twitter_card: document.getElementById('twitter-card').value,
+      schema_type: document.getElementById('schema-type').value,
+      index: document.getElementById('seo-index').checked,
+      noindex: document.getElementById('seo-noindex').checked,
+      follow: document.getElementById('seo-follow').checked,
+      nofollow: document.getElementById('seo-nofollow').checked,
+      priority: document.getElementById('seo-priority').value,
+      change_frequency: document.getElementById('seo-change-frequency').value,
+      heading_analysis: document.getElementById('seo-serp').value,
+      content_analysis: document.getElementById('og-description').value,
+      serp_preview: document.getElementById('seo-serp').value,
+      google_preview: document.getElementById('twitter-description').value,
+      image_alt: document.getElementById('image-alt').value,
+      image_title: document.getElementById('image-title').value,
+      image_caption: document.getElementById('image-caption').value,
+      image_filename: document.getElementById('image-filename').value,
+      webp_status: document.getElementById('webp-status').value,
+      compression_status: document.getElementById('compression-status').value,
+      ai_generated: false,
+    }
+  };
+}
+
+function renderAnalysis() {
+  const title = document.getElementById('seo-title').value.trim();
+  const description = document.getElementById('seo-description').value.trim();
+  const keyword = document.getElementById('seo-focus').value.trim().toLowerCase();
+  const url = document.getElementById('seo-slug').value.trim().toLowerCase();
+  const canonical = document.getElementById('seo-canonical').value.trim();
+  const schema = document.getElementById('schema-type').value.trim();
+  const ogTitle = document.getElementById('og-title').value.trim();
+  const twitterTitle = document.getElementById('twitter-title').value.trim();
+  const alt = document.getElementById('image-alt').value.trim();
+  const checks = [];
+  const score = [
+    title.length >= 50 && title.length <= 60 ? 10 : title.length >= 30 ? 6 : 0,
+    description.length >= 140 && description.length <= 160 ? 10 : description.length >= 100 ? 6 : 0,
+    keyword && title.toLowerCase().includes(keyword) ? 10 : 0,
+    keyword && url.includes(keyword) ? 10 : 0,
+    keyword && description.toLowerCase().includes(keyword) ? 10 : 0,
+    title.length > 0 && description.length > 0 ? 10 : 0,
+    document.getElementById('seo-serp').value.trim() ? 10 : 0,
+    canonical ? 10 : 0,
+    schema ? 10 : 0,
+    ogTitle ? 10 : 0,
+    twitterTitle ? 10 : 0,
+    alt ? 10 : 0
+  ].reduce((sum, value) => sum + value, 0);
+
+  const total = Math.min(100, score);
+  let level = 'Critical'; let levelClass='critical';
+  if (total >= 85) { level='Excellent'; levelClass='excellent'; }
+  else if (total >= 65) { level='Good'; levelClass='good'; }
+  else { level='Needs Improvement'; levelClass='needs-improvement'; }
+
+  document.getElementById('analysis-score').textContent = `${total}/100`;
+  document.getElementById('analysis-score').className = `analysis-score ${levelClass}`;
+  document.getElementById('analysis-list').innerHTML = [
+    { label: 'SEO Title Length', value: title.length >= 50 && title.length <= 60 ? 'Excellent' : title.length >= 30 ? 'Good' : 'Critical' },
+    { label: 'Meta Description Length', value: description.length >= 140 && description.length <= 160 ? 'Excellent' : description.length >= 100 ? 'Good' : 'Critical' },
+    { label: 'Keyword in Title', value: keyword && title.toLowerCase().includes(keyword) ? 'Excellent' : 'Needs Improvement' },
+    { label: 'Keyword in URL', value: keyword && url.includes(keyword) ? 'Excellent' : 'Needs Improvement' },
+    { label: 'Schema', value: schema ? 'Excellent' : 'Critical' },
+    { label: 'Open Graph', value: ogTitle ? 'Good' : 'Needs Improvement' },
+    { label: 'Twitter Card', value: twitterTitle ? 'Good' : 'Needs Improvement' },
+    { label: 'Canonical', value: canonical ? 'Excellent' : 'Critical' },
+    { label: 'Image ALT', value: alt ? 'Good' : 'Needs Improvement' }
+  ].map((item) => `<div class="analysis-item"><span>${item.label}</span><span class="analysis-badge ${item.value.toLowerCase().replace(/ /g, '-')}">${item.value}</span></div>`).join('');
+
+  document.getElementById('facebook-preview').innerHTML = `<strong>${ogTitle || 'Facebook Title'}</strong><div>${document.getElementById('og-description').value || 'Open Graph description appears here.'}</div>`;
+  document.getElementById('twitter-preview').innerHTML = `<strong>${document.getElementById('twitter-title').value || 'Twitter Title'}</strong><div>${document.getElementById('twitter-description').value || 'Twitter description appears here.'}</div>`;
+}
+
+function scheduleSave() {
+  clearTimeout(state.autoSaveTimer);
+  const status = document.getElementById('seo-save-status');
+  if (status) status.textContent = 'Saving…';
+  state.autoSaveTimer = setTimeout(() => saveSeoRecord(), 700);
+}
+
+async function saveSeoRecord() {
+  if (!state.selectedId) return;
+  try {
+    await adminFetch(`/api/seo/records/${state.selectedType}/${state.selectedId}`, { method: 'POST', body: JSON.stringify(getFormPayload()) });
+    const status = document.getElementById('seo-save-status');
+    if (status) status.textContent = 'Saved automatically';
+    showToast('SEO updates saved');
+  } catch (err) {
+    const status = document.getElementById('seo-save-status');
+    if (status) status.textContent = 'Save failed';
+    showToast(err.message, true);
+  }
+}
+
+function populateForm(record) {
+  const seo = record && record.seo ? record.seo : {};
+  document.getElementById('seo-title').value = seo.seo_title || '';
+  document.getElementById('seo-description').value = seo.meta_description || '';
+  document.getElementById('seo-slug').value = seo.slug || record.slug || '';
+  document.getElementById('seo-canonical').value = seo.canonical_url || '';
+  document.getElementById('seo-focus').value = seo.focus_keyword || '';
+  document.getElementById('seo-secondary').value = seo.secondary_keywords || '';
+  document.getElementById('seo-serp').value = seo.serp_preview || '';
+  document.getElementById('og-title').value = seo.og_title || '';
+  document.getElementById('og-description').value = seo.og_description || '';
+  document.getElementById('twitter-title').value = seo.og_title || '';
+  document.getElementById('twitter-description').value = seo.og_description || '';
+  document.getElementById('twitter-card').value = seo.twitter_card || 'summary';
+  document.getElementById('schema-type').value = seo.schema_type || 'Product';
+  document.getElementById('seo-index').checked = seo.index_status !== 0;
+  document.getElementById('seo-noindex').checked = !!seo.noindex;
+  document.getElementById('seo-follow').checked = seo.follow !== 0;
+  document.getElementById('seo-nofollow').checked = !!seo.nofollow;
+  document.getElementById('seo-priority').value = seo.priority || '0.7';
+  document.getElementById('seo-change-frequency').value = seo.change_frequency || 'monthly';
+  document.getElementById('image-alt').value = seo.image_alt || '';
+  document.getElementById('image-title').value = seo.image_title || '';
+  document.getElementById('image-caption').value = seo.image_caption || '';
+  document.getElementById('image-filename').value = seo.image_filename || '';
+  document.getElementById('webp-status').value = seo.webp_status || 'Ready';
+  document.getElementById('compression-status').value = seo.compression_status || 'Optimized';
+  updateCharCounter();
+  renderAnalysis();
+}
+
+async function loadManagerData() {
+  try {
+    const data = await adminFetch(`/api/seo/records?entityType=${state.selectedType}`);
+    const records = Array.isArray(data) ? data : data.products || [];
+    state.items = records;
+    populateEntitySelect(records);
+    const selected = records.find((item) => String(item.id) === String(state.selectedId)) || records[0];
+    if (selected) {
+      state.selectedId = selected.id;
+      populateForm(selected);
+    }
+  } catch (err) {
+    showToast(err.message, true);
+  }
+}
+
+async function loadSeoData() {
+  try {
+    const dashboard = await adminFetch('/api/seo/dashboard');
+    state.dashboard = dashboard;
+    renderStats();
+    await loadManagerData();
+    const redirects = await adminFetch('/api/seo/redirects');
+    state.redirects = redirects;
+    document.getElementById('redirects-body').innerHTML = redirects.map((item) => `<tr><td>${item.source}</td><td>${item.target}</td><td>${item.status_code}</td><td><button class="btn btn-outline btn-sm" data-delete-redirect="${item.id}">Delete</button></td></tr>`).join('') || '<tr class="empty-row"><td colspan="4">No redirects yet.</td></tr>';
+    const fourOhFours = await adminFetch('/api/seo/404s');
+    state.fourOhFours = fourOhFours;
+    document.getElementById('404-body').innerHTML = fourOhFours.map((item) => `<tr><td>${item.url}</td><td>${item.hits}</td><td>${item.referrer || '-'}</td><td><button class="btn btn-outline btn-sm" data-create-redirect="${item.url}">Redirect</button></td></tr>`).join('') || '<tr class="empty-row"><td colspan="4">No 404s recorded.</td></tr>';
+    const settings = await adminFetch('/api/seo/settings');
+    state.settings = settings;
+    document.getElementById('setting-meta-template').value = settings.meta_template || '';
+    document.getElementById('setting-robots').value = settings.global_robots || '';
+    document.getElementById('setting-schema').value = settings.global_schema || '';
+    document.getElementById('setting-verification').value = settings.google_verification || '';
+    document.getElementById('robots-text').value = settings.robots_txt || 'User-agent: *\nAllow: /';
+    document.getElementById('technical-settings').value = settings.technical_settings || 'Canonical: enabled\nBreadcrumbs: enabled';
+  } catch (err) {
+    showToast(err.message, true);
+  }
+}
+
+async function runAudit() {
+  try {
+    const data = await adminFetch('/api/seo/audit');
+    document.getElementById('audit-body').innerHTML = (data.issues || []).map((issue) => `<tr><td>${issue.type}</td><td>${issue.item}</td><td>${issue.detail}</td><td><span class="badge badge-pending">Needs review</span></td></tr>`).join('') || '<tr class="empty-row"><td colspan="4">No issues found.</td></tr>';
+    showToast(`Audit complete: ${data.score}/100`);
+  } catch (err) {
+    showToast(err.message, true);
+  }
+}
+
+async function saveSettings() {
+  try {
+    await adminFetch('/api/seo/settings', { method: 'POST', body: JSON.stringify({
+      meta_template: document.getElementById('setting-meta-template').value,
+      global_robots: document.getElementById('setting-robots').value,
+      global_schema: document.getElementById('setting-schema').value,
+      google_verification: document.getElementById('setting-verification').value,
+      robots_txt: document.getElementById('robots-text').value,
+      technical_settings: document.getElementById('technical-settings').value
+    }) });
+    showToast('Settings saved');
+  } catch (err) {
+    showToast(err.message, true);
+  }
+}
+
+async function saveRedirect() {
+  try {
+    await adminFetch('/api/seo/redirects', { method: 'POST', body: JSON.stringify({
+      source: document.getElementById('redirect-source').value,
+      target: document.getElementById('redirect-target').value,
+      status_code: document.getElementById('redirect-status').value,
+      redirect_type: document.getElementById('redirect-type').value
+    }) });
+    document.getElementById('redirect-source').value = '';
+    document.getElementById('redirect-target').value = '';
+    await loadSeoData();
+    showToast('Redirect added');
+  } catch (err) {
+    showToast(err.message, true);
+  }
+}
+
+async function saveSchema() {
+  try {
+    await adminFetch('/api/seo/schema', { method: 'POST', body: JSON.stringify({ schema_json: document.getElementById('schema-json').value || '{}', entity_type: state.selectedType, entity_id: state.selectedId || 'global', schema_type: document.getElementById('schema-type').value || 'Product' }) });
+    showToast('Schema saved');
+  } catch (err) {
+    showToast(err.message, true);
+  }
+}
+
+function exportAuditCsv() {
+  const rows = Array.from(document.querySelectorAll('#audit-body tr')).filter((row) => !row.classList.contains('empty-row'));
+  const csv = ['Check,Item,Detail,Status', ...rows.map((row) => Array.from(row.cells).map((cell) => `"${cell.textContent.replace(/"/g, '""')}"`).join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'seo-audit.csv';
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+async function runAiAction(action) {
+  try {
+    const payload = { text: document.getElementById('ai-assistant-input').value, focus_keyword: document.getElementById('seo-focus').value };
+    const data = await adminFetch('/api/seo/ai', { method: 'POST', body: JSON.stringify(payload) });
+    if (action === 'meta') document.getElementById('seo-description').value = data.suggestions.metaDescription || '';
+    if (action === 'schema') document.getElementById('schema-json').value = data.suggestions.schema || '';
+    if (action === 'faq') document.getElementById('ai-output').value = (data.suggestions.faq || []).join('\n');
+    showToast('AI suggestions generated');
+  } catch (err) {
+    showToast(err.message, true);
+  }
+}
+
+function initSchemaPicker() {
+  const options = ['Product','Organization','Article','FAQ','Review','Breadcrumb','Local Business','Website','Person','Service','Course','Book','Video'];
+  document.getElementById('schema-picker').innerHTML = options.map((option) => `<button class="schema-chip" data-schema="${option}">${option}</button>`).join('');
+  document.querySelectorAll('.schema-chip').forEach((button) => {
+    button.addEventListener('click', () => {
+      document.getElementById('schema-type').value = button.dataset.schema;
+      renderAnalysis();
+    });
+  });
+}
+
+['seo-title','seo-description','seo-slug','seo-canonical','seo-focus','seo-secondary','seo-serp','og-title','og-description','twitter-title','twitter-description','twitter-card','schema-type','image-alt','image-title','image-caption','image-filename','webp-status','compression-status','seo-priority','seo-change-frequency','seo-index','seo-noindex','seo-follow','seo-nofollow'].forEach((id) => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener('input', () => {
+      updateCharCounter();
+      renderAnalysis();
+      scheduleSave();
+    });
+    el.addEventListener('change', () => {
+      updateCharCounter();
+      renderAnalysis();
+      scheduleSave();
+    });
+  }
+});
+
+document.getElementById('seo-entity-type').addEventListener('change', (e) => {
+  state.selectedType = e.target.value;
+  loadManagerData();
+});
+
+document.getElementById('seo-entity-select').addEventListener('change', (e) => {
+  state.selectedId = e.target.value;
+  const record = state.items.find((item) => String(item.id) === String(state.selectedId));
+  if (record) populateForm(record);
+});
+
+document.querySelectorAll('.seo-nav-btn').forEach((btn) => btn.addEventListener('click', () => setView(btn.dataset.view)));
+document.getElementById('refresh-seo-btn').addEventListener('click', loadSeoData);
+document.getElementById('run-audit-btn').addEventListener('click', runAudit);
+document.getElementById('audit-refresh-btn').addEventListener('click', runAudit);
+document.getElementById('export-audit-btn').addEventListener('click', exportAuditCsv);
+document.getElementById('save-technical-btn').addEventListener('click', saveSettings);
+document.getElementById('save-settings-btn').addEventListener('click', saveSettings);
+document.getElementById('save-redirect-btn').addEventListener('click', saveRedirect);
+document.getElementById('ai-generate-meta').addEventListener('click', () => runAiAction('meta'));
+document.getElementById('ai-generate-schema').addEventListener('click', () => runAiAction('schema'));
+document.getElementById('ai-generate-faq').addEventListener('click', () => runAiAction('faq'));
+document.getElementById('ai-run-meta').addEventListener('click', () => runAiAction('meta'));
+document.getElementById('ai-run-schema').addEventListener('click', () => runAiAction('schema'));
+document.getElementById('ai-run-faq').addEventListener('click', () => runAiAction('faq'));
+document.getElementById('redirects-body').addEventListener('click', async (e) => {
+  const button = e.target.closest('[data-delete-redirect]');
+  if (!button) return;
+  await adminFetch(`/api/seo/redirects/${button.dataset.deleteRedirect}`, { method: 'DELETE' });
+  showToast('Redirect removed');
+  loadSeoData();
+});
+document.getElementById('404-body').addEventListener('click', async (e) => {
+  const button = e.target.closest('[data-create-redirect]');
+  if (!button) return;
+  document.getElementById('redirect-source').value = button.dataset.createRedirect;
+  document.getElementById('redirect-target').value = '/';
+  setView('redirects');
+});
+
+initSchemaPicker();
+loadSeoData();
+</script>
+</body>
+</html>

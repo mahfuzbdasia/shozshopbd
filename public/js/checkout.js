@@ -3,15 +3,19 @@
   const form = document.getElementById('checkout-form');
   const summaryList = document.getElementById('checkout-items');
   const subtotalEl = document.getElementById('co-subtotal');
+  const deliveryChargeEl = document.getElementById('co-delivery-charge');
   const discountRow = document.getElementById('co-discount-row');
   const discountEl = document.getElementById('co-discount');
-  const shippingEl = document.getElementById('co-shipping');
   const totalEl = document.getElementById('co-total');
   const couponInput = document.getElementById('coupon-code');
   const couponBtn = document.getElementById('apply-coupon');
   const couponMsg = document.getElementById('coupon-msg');
   const successPanel = document.getElementById('checkout-success');
   const alertBox = document.getElementById('checkout-alert');
+  const successSubtotalEl = document.getElementById('success-subtotal');
+  const successDeliveryChargeEl = document.getElementById('success-delivery-charge');
+  const successDiscountEl = document.getElementById('success-discount');
+  const successTotalEl = document.getElementById('success-total');
   const cityPicker = document.querySelector('[data-city-picker]');
   const cityInput = document.getElementById('co-city');
   const citySearchInput = document.getElementById('city-search-input');
@@ -28,6 +32,16 @@
   let geocodeTimer;
   let cityActiveIndex = -1;
   const geocodeCache = new Map();
+  const VALID_DISTRICTS = [
+    'Dhaka', 'Faridpur', 'Gazipur', 'Gopalganj', 'Kishoreganj', 'Madaripur', 'Manikganj', 'Munshiganj', 'Narayanganj', 'Narsingdi', 'Rajbari', 'Shariatpur', 'Tangail',
+    'Bandarban', 'Brahmanbaria', 'Chandpur', 'Chattogram', 'Cumilla', 'Cox\'s Bazar', 'Feni', 'Khagrachhari', 'Lakshmipur', 'Noakhali', 'Rangamati',
+    'Bogura', 'Chapainawabganj', 'Joypurhat', 'Naogaon', 'Natore', 'Pabna', 'Rajshahi', 'Sirajganj',
+    'Bagerhat', 'Chuadanga', 'Jashore', 'Jhenaidah', 'Khulna', 'Kushtia', 'Magura', 'Meherpur', 'Narail', 'Satkhira',
+    'Barguna', 'Barishal', 'Bhola', 'Jhalokathi', 'Patuakhali', 'Pirojpur',
+    'Habiganj', 'Moulvibazar', 'Sunamganj', 'Sylhet',
+    'Dinajpur', 'Gaibandha', 'Kurigram', 'Lalmonirhat', 'Nilphamari', 'Panchagarh', 'Rangpur', 'Thakurgaon',
+    'Jamalpur', 'Mymensingh', 'Netrokona', 'Sherpur',
+  ];
   const cityGroups = [
     { division: 'Dhaka Division', cities: ['Dhaka', 'Gazipur', 'Narayanganj', 'Tangail', 'Narsingdi'] },
     { division: 'Chattogram Division', cities: ['Chattogram', 'Cumilla', 'Cox\'s Bazar', 'Noakhali', 'Feni', 'Brahmanbaria'] },
@@ -49,6 +63,124 @@
       return;
     }
     submitButton.disabled = !allowBypass && !valid;
+  }
+
+  function calculateDeliveryCharge(district) {
+    const selected = String(district || '').trim();
+    if (!selected) return null;
+    return selected === 'Dhaka' ? 80 : VALID_DISTRICTS.includes(selected) ? 150 : null;
+  }
+
+  function isValidDistrict(value) {
+    return VALID_DISTRICTS.includes(String(value || '').trim());
+  }
+
+  async function fetchProductById(id) {
+    try {
+      const res = await fetch(`/api/products/id/${encodeURIComponent(String(id))}`);
+      if (!res.ok) return null;
+      const payload = await readJsonResponse(res, 'Could not load product details.');
+      return payload?.product || null;
+    } catch (err) {
+      console.warn('Product fetch failed:', err);
+      return null;
+    }
+  }
+
+  function restoreSavedDistrict() {
+    const saved = localStorage.getItem('sohoz_checkout_city');
+    if (saved && isValidDistrict(saved)) {
+      cityInput.value = saved;
+    }
+  }
+
+  function getItemAttributes(item) {
+    const attributes = [];
+    if (Array.isArray(item.attributes)) {
+      item.attributes.forEach((attr) => {
+        if (attr && typeof attr === 'string') attributes.push(attr);
+      });
+    } else if (item.attributes && typeof item.attributes === 'object') {
+      Object.entries(item.attributes).forEach(([key, value]) => {
+        if (value) attributes.push(`${escapeHtml(key)}: ${escapeHtml(String(value))}`);
+      });
+    }
+    return attributes;
+  }
+
+  function getStockNote(item) {
+    if (item.stock === undefined || item.stock === null) return '';
+    if (item.stock <= 0) return 'Out of stock';
+    if (item.qty >= item.stock) return `Only ${item.stock} available`;
+    return '';
+  }
+
+  function renderEmptyState() {
+    summaryList.innerHTML = `
+      <div class="checkout-empty-state">
+        <p>Your cart is empty.</p>
+        <a href="/shop.html" class="btn btn-primary">Continue shopping</a>
+      </div>
+    `;
+    couponMsg.textContent = '';
+    discountRow.classList.add('hidden');
+    submitButton.disabled = true;
+  }
+
+  async function recalculateCoupon() {
+    if (!appliedCode) return;
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: appliedCode, subtotal: Cart.subtotal() }),
+      });
+      const data = await readJsonResponse(res, 'Could not validate coupon right now.');
+      if (data.valid) {
+        appliedDiscount = data.discount;
+        appliedCode = data.code;
+        couponMsg.textContent = `Code ${data.code} applied — you saved ${formatBDT(data.discount)}.`;
+        couponMsg.style.color = 'var(--pine)';
+      } else {
+        appliedDiscount = 0;
+        appliedCode = null;
+        couponMsg.textContent = data.error || 'Coupon is no longer valid.';
+        couponMsg.style.color = 'var(--danger)';
+      }
+    } catch (err) {
+      appliedDiscount = 0;
+      appliedCode = null;
+      couponMsg.textContent = 'Coupon could not be refreshed.';
+      couponMsg.style.color = 'var(--danger)';
+    }
+  }
+
+  async function adjustCartQuantity(item, targetQty) {
+    if (targetQty < 1) return;
+    let stock = item.stock;
+    if (stock === undefined || stock === null) {
+      const product = await fetchProductById(item.id);
+      if (product) stock = product.stock;
+    }
+    if (stock !== undefined && stock !== null && targetQty > stock) {
+      alertBox.textContent = `Only ${stock} available for ${item.name}.`;
+      alertBox.className = 'alert alert-error show';
+      return;
+    }
+    Cart.updateQty(item.id, targetQty);
+    await recalculateCoupon();
+    renderSummary();
+  }
+
+  async function handleRemoveItem(itemId) {
+    if (!window.confirm('Remove this product from your order?')) return;
+    Cart.remove(itemId);
+    await recalculateCoupon();
+    renderSummary();
+  }
+
+  function getDeliveryChargeLabel(district) {
+    const charge = calculateDeliveryCharge(district);
+    return charge === null ? '—' : formatBDT(charge);
   }
 
   function renderCityOptions(query = '') {
@@ -255,15 +387,18 @@
     }
   }
 
-  cityInput.addEventListener('focus', () => openCityDropdown());
-  cityInput.addEventListener('input', (event) => {
-    if (citySearchInput) citySearchInput.value = event.target.value;
-    renderCityOptions(event.target.value);
-    if (!cityPicker?.classList.contains('is-open')) openCityDropdown();
+  cityInput.addEventListener('change', () => {
+    updateTotals();
+    localStorage.setItem('sohoz_checkout_city', cityInput.value);
     if (checkoutSettings?.enableVerification === false) return;
     scheduleGeocode();
   });
-  cityInput.addEventListener('keydown', handleCityKeydown);
+  cityInput.addEventListener('input', () => {
+    updateTotals();
+    localStorage.setItem('sohoz_checkout_city', cityInput.value);
+    if (checkoutSettings?.enableVerification === false) return;
+    scheduleGeocode();
+  });
   if (citySearchInput) {
     citySearchInput.addEventListener('input', (event) => {
       cityInput.value = event.target.value;
@@ -291,33 +426,83 @@
     if (checkoutSettings?.enableVerification === false) return;
     scheduleGeocode();
   });
+
+  summaryList.addEventListener('click', async (event) => {
+    const control = event.target.closest('[data-action]');
+    if (!control) return;
+    const action = control.dataset.action;
+    const itemId = Number(control.dataset.id);
+    const item = Cart.read().find((i) => i.id === itemId);
+    if (!item) return;
+    if (action === 'increase') {
+      control.disabled = true;
+      await adjustCartQuantity(item, item.qty + 1);
+      control.disabled = false;
+    } else if (action === 'decrease') {
+      control.disabled = true;
+      await adjustCartQuantity(item, item.qty - 1);
+      control.disabled = false;
+    } else if (action === 'remove') {
+      await handleRemoveItem(itemId);
+    }
+  });
   function renderSummary() {
     const items = Cart.read();
     if (!items.length) {
-      window.location.href = '/cart.html';
+      renderEmptyState();
+      restoreSavedDistrict();
+      updateTotals();
       return;
     }
-    summaryList.innerHTML = items.map((i) => `
-      <div class="co-line">
-        <span>${i.name} <span class="sku-tag">×${i.qty}</span></span>
-        <span>${formatBDT(i.price * i.qty)}</span>
-      </div>`).join('');
+
+    const rendered = items.map((i) => {
+      const imageUrl = i.image || '/images/products/meridian-steel.svg';
+      const safeName = escapeHtml(i.name || 'Product');
+      const lineTotal = formatBDT(i.price * i.qty);
+      const unitPrice = formatBDT(i.price);
+      const attributes = getItemAttributes(i);
+      const stockNote = getStockNote(i);
+      const disableDecrease = i.qty <= 1 ? 'disabled' : '';
+      const disableIncrease = i.stock !== undefined && i.stock !== null && i.qty >= i.stock ? 'disabled' : '';
+      return `
+      <div class="co-product-row" data-item-id="${i.id}">
+        <div class="co-product-info">
+          <img src="${escapeHtml(imageUrl)}" alt="${safeName}" loading="lazy" width="64" height="64">
+          <div class="co-product-details">
+            <div class="co-product-name">${safeName}</div>
+            ${attributes.length ? `<div class="co-product-attributes">${attributes.map((attr) => `<div>${attr}</div>`).join('')}</div>` : ''}
+            <div class="co-product-meta"><span>${unitPrice} each</span></div>
+            <div class="co-product-controls">
+              <button type="button" class="qty-btn" data-action="decrease" data-id="${i.id}" ${disableDecrease} aria-label="Decrease quantity">−</button>
+              <span class="qty-value">${i.qty}</span>
+              <button type="button" class="qty-btn" data-action="increase" data-id="${i.id}" ${disableIncrease} aria-label="Increase quantity">+</button>
+              <button type="button" class="co-product-remove" data-action="remove" data-id="${i.id}">Remove</button>
+            </div>
+            ${stockNote ? `<div class="co-product-stock">${escapeHtml(stockNote)}</div>` : ''}
+          </div>
+        </div>
+        <div class="co-product-total mono">${lineTotal}</div>
+      </div>`;
+    }).join('');
+
+    summaryList.innerHTML = rendered;
+    restoreSavedDistrict();
     updateTotals();
   }
 
   function updateTotals() {
     const subtotal = Cart.subtotal();
     const afterDiscount = Math.max(0, subtotal - appliedDiscount);
-    const shipping = afterDiscount >= 10000 ? 0 : 120;
+    const deliveryCharge = calculateDeliveryCharge(cityInput.value);
     subtotalEl.textContent = formatBDT(subtotal);
-    shippingEl.textContent = shipping === 0 ? 'Free' : formatBDT(shipping);
+    deliveryChargeEl.textContent = getDeliveryChargeLabel(cityInput.value);
     if (appliedDiscount > 0) {
       discountRow.classList.remove('hidden');
       discountEl.textContent = '−' + formatBDT(appliedDiscount);
     } else {
       discountRow.classList.add('hidden');
     }
-    totalEl.textContent = formatBDT(afterDiscount + shipping);
+    totalEl.textContent = formatBDT(afterDiscount + (deliveryCharge === null ? 0 : deliveryCharge));
   }
 
   couponBtn.addEventListener('click', async () => {
@@ -356,12 +541,20 @@
     alertBox.className = 'alert';
 
     const fd = new FormData(form);
+    const selectedCity = fd.get('city');
+    if (!isValidDistrict(selectedCity)) {
+      alertBox.textContent = 'Please select your City / District.';
+      alertBox.className = 'alert alert-error show';
+      btn.disabled = false;
+      btn.textContent = 'Place order';
+      return;
+    }
     const payload = {
       customer_name: fd.get('name'),
       customer_email: fd.get('email') || `guest-${Date.now()}@local.invalid`,
       customer_phone: fd.get('phone'),
       shipping_address: fd.get('address'),
-      city: fd.get('city'),
+      city: selectedCity,
       latitude: verifiedLocation?.lat,
       longitude: verifiedLocation?.lon,
       place_id: verifiedLocation?.placeId,
@@ -386,7 +579,10 @@
       document.getElementById('checkout-summary-card').classList.add('hidden');
       successPanel.classList.remove('hidden');
       document.getElementById('success-order-no').textContent = data.order_no;
-      document.getElementById('success-total').textContent = formatBDT(data.total);
+      successSubtotalEl.textContent = formatBDT(data.subtotal);
+      successDeliveryChargeEl.textContent = formatBDT(data.delivery_charge ?? data.shipping_fee ?? 0);
+      successDiscountEl.textContent = data.discount ? '−' + formatBDT(data.discount) : '৳0';
+      successTotalEl.textContent = formatBDT(data.total);
     } catch (err) {
       alertBox.textContent = err.message;
       alertBox.className = 'alert alert-error show';

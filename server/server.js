@@ -15,6 +15,7 @@ const authRoutes = require('./routes/auth');
 const contactRoutes = require('./routes/contact');
 const newsletterRoutes = require('./routes/newsletter');
 const settingsRoutes = require('./routes/settings');
+const seoRoutes = require('./routes/seo');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -39,6 +40,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/seo', seoRoutes);
 
 app.get('/api/facebook-catalog.xml', (req, res) => {
   const products = db.prepare('SELECT * FROM products WHERE is_active = 1').all();

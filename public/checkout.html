@@ -45,16 +45,89 @@
         <div class="field"><label for="co-address">Delivery address</label><textarea id="co-address" name="address" rows="3" required></textarea></div>
         <div class="field">
           <label for="co-city">City / District</label>
-          <div class="city-picker" data-city-picker>
-            <input id="co-city" name="city" autocomplete="address-level2" spellcheck="false" required aria-autocomplete="list" aria-expanded="false" aria-controls="city-dropdown" placeholder="Select your city">
-            <button type="button" class="city-picker-toggle" aria-label="Open city picker">▾</button>
-            <div class="city-picker-dropdown" id="city-dropdown" role="listbox" aria-label="Cities and districts">
-              <div class="city-picker-search">
-                <input type="text" id="city-search-input" placeholder="Search your city..." aria-label="Search your city">
-              </div>
-              <div class="city-picker-options" id="city-options"></div>
-            </div>
-          </div>
+          <select id="co-city" name="city" required>
+            <option value="" disabled selected>Select City / District</option>
+            <optgroup label="Dhaka Division">
+              <option>Dhaka</option>
+              <option>Faridpur</option>
+              <option>Gazipur</option>
+              <option>Gopalganj</option>
+              <option>Kishoreganj</option>
+              <option>Madaripur</option>
+              <option>Manikganj</option>
+              <option>Munshiganj</option>
+              <option>Narayanganj</option>
+              <option>Narsingdi</option>
+              <option>Rajbari</option>
+              <option>Shariatpur</option>
+              <option>Tangail</option>
+            </optgroup>
+            <optgroup label="Chattogram Division">
+              <option>Bandarban</option>
+              <option>Brahmanbaria</option>
+              <option>Chandpur</option>
+              <option>Chattogram</option>
+              <option>Cumilla</option>
+              <option>Cox's Bazar</option>
+              <option>Feni</option>
+              <option>Khagrachhari</option>
+              <option>Lakshmipur</option>
+              <option>Noakhali</option>
+              <option>Rangamati</option>
+            </optgroup>
+            <optgroup label="Rajshahi Division">
+              <option>Bogura</option>
+              <option>Chapainawabganj</option>
+              <option>Joypurhat</option>
+              <option>Naogaon</option>
+              <option>Natore</option>
+              <option>Pabna</option>
+              <option>Rajshahi</option>
+              <option>Sirajganj</option>
+            </optgroup>
+            <optgroup label="Khulna Division">
+              <option>Bagerhat</option>
+              <option>Chuadanga</option>
+              <option>Jashore</option>
+              <option>Jhenaidah</option>
+              <option>Khulna</option>
+              <option>Kushtia</option>
+              <option>Magura</option>
+              <option>Meherpur</option>
+              <option>Narail</option>
+              <option>Satkhira</option>
+            </optgroup>
+            <optgroup label="Barishal Division">
+              <option>Barguna</option>
+              <option>Barishal</option>
+              <option>Bhola</option>
+              <option>Jhalokathi</option>
+              <option>Patuakhali</option>
+              <option>Pirojpur</option>
+            </optgroup>
+            <optgroup label="Sylhet Division">
+              <option>Habiganj</option>
+              <option>Moulvibazar</option>
+              <option>Sunamganj</option>
+              <option>Sylhet</option>
+            </optgroup>
+            <optgroup label="Rangpur Division">
+              <option>Dinajpur</option>
+              <option>Gaibandha</option>
+              <option>Kurigram</option>
+              <option>Lalmonirhat</option>
+              <option>Nilphamari</option>
+              <option>Panchagarh</option>
+              <option>Rangpur</option>
+              <option>Thakurgaon</option>
+            </optgroup>
+            <optgroup label="Mymensingh Division">
+              <option>Jamalpur</option>
+              <option>Mymensingh</option>
+              <option>Netrokona</option>
+              <option>Sherpur</option>
+            </optgroup>
+          </select>
         </div>
 
         <h3 style="margin:30px 0 16px;">Payment method</h3>
@@ -71,8 +144,10 @@
         <h2>Order placed</h2>
         <p style="color:var(--ink-soft);margin:12px 0 6px;">Order number</p>
         <p class="price" style="font-size:1.3rem;" id="success-order-no"></p>
-        <p style="color:var(--ink-soft);margin:18px 0 6px;">Total charged</p>
-        <p class="price" style="font-size:1.1rem;" id="success-total"></p>
+        <div class="summary-row"><span>Subtotal</span><span class="price" id="success-subtotal">৳0</span></div>
+        <div class="summary-row"><span>Delivery Charge</span><span class="price" id="success-delivery-charge">৳0</span></div>
+        <div class="summary-row"><span>Discount</span><span class="price" id="success-discount">৳0</span></div>
+        <div class="summary-row total"><span>Grand Total</span><span class="price" id="success-total">৳0</span></div>
         <div style="display:flex;gap:14px;justify-content:center;margin-top:30px;flex-wrap:wrap;">
           <a href="/order-tracking.html" class="btn btn-outline">Track this order</a>
           <a href="/shop.html" class="btn btn-primary">Continue shopping</a>
@@ -89,9 +164,9 @@
       </div>
       <p class="form-note" id="coupon-msg" style="margin-top:-6px;"></p>
       <div class="summary-row"><span>Subtotal</span><span class="price" id="co-subtotal">৳0</span></div>
+      <div class="summary-row"><span>Delivery Charge</span><span class="price" id="co-delivery-charge">—</span></div>
       <div class="summary-row hidden" id="co-discount-row"><span>Discount</span><span class="price" id="co-discount">৳0</span></div>
-      <div class="summary-row"><span>Shipping</span><span class="price" id="co-shipping">Free</span></div>
-      <div class="summary-row total"><span>Total</span><span class="price" id="co-total">৳0</span></div>
+      <div class="summary-row total"><span>Grand Total</span><span class="price" id="co-total">৳0</span></div>
     </div>
   </div>
 </section>

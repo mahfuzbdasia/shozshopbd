@@ -13,8 +13,16 @@ const Cart = (function () {
     qty = qty || 1;
     const items = read();
     const existing = items.find((i) => i.id === product.id);
-    if (existing) existing.qty += qty;
-    else items.push({ id: product.id, name: product.name, price: product.price, image: product.image, sku: product.sku, qty });
+    if (existing) {
+      existing.qty += qty;
+      if (product.stock !== undefined) existing.stock = product.stock;
+      if (product.attributes !== undefined) existing.attributes = product.attributes;
+    } else {
+      const itemData = { id: product.id, name: product.name, price: product.price, image: product.image, sku: product.sku, qty };
+      if (product.stock !== undefined) itemData.stock = product.stock;
+      if (product.attributes !== undefined) itemData.attributes = product.attributes;
+      items.push(itemData);
+    }
     write(items);
   }
   function updateQty(id, qty) {

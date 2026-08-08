@@ -57,32 +57,192 @@
     <div class="modal-head"><h3 id="modal-title">New product</h3><button class="modal-close" id="modal-close">&times;</button></div>
     <form id="product-form">
       <input type="hidden" id="pf-id">
-      <div class="field"><label for="pf-name">Name</label><input id="pf-name" required></div>
-      <div class="field-row">
-        <div class="field"><label for="pf-category">Category</label>
-          <select id="pf-category" required><option>Classic</option><option>Chronograph</option><option>Diver</option><option>Sport</option><option>Minimalist</option></select>
+      <div class="modal-tabs">
+        <button type="button" class="modal-tab active" data-target="product-panel">Product</button>
+        <button type="button" class="modal-tab" data-target="seo-panel">SEO</button>
+      </div>
+
+      <div id="product-panel" class="modal-panel">
+        <div class="field"><label for="pf-name">Name</label><input id="pf-name" required></div>
+        <div class="field-row">
+          <div class="field"><label for="pf-category">Category</label>
+            <select id="pf-category" required><option>Classic</option><option>Chronograph</option><option>Diver</option><option>Sport</option><option>Minimalist</option></select>
+          </div>
+          <div class="field"><label for="pf-movement">Movement</label><input id="pf-movement" placeholder="Automatic"></div>
         </div>
-        <div class="field"><label for="pf-movement">Movement</label><input id="pf-movement" placeholder="Automatic"></div>
+        <div class="field-row">
+          <div class="field"><label for="pf-price">Price (৳)</label><input id="pf-price" type="number" min="0" required></div>
+          <div class="field"><label for="pf-old-price">Old price (optional)</label><input id="pf-old-price" type="number" min="0"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label for="pf-rating">Rating</label><input id="pf-rating" type="number" min="0" max="5" step="0.1" placeholder="4.5"></div>
+          <div class="field"><label for="pf-case">Case size (mm)</label><input id="pf-case" type="number" min="20" max="60"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label for="pf-strap">Strap</label><input id="pf-strap" placeholder="Leather"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label for="pf-water">Water resistance</label><input id="pf-water" placeholder="100m"></div>
+          <div class="field"><label for="pf-stock">Stock</label><input id="pf-stock" type="number" min="0" required></div>
+        </div>
+        <div class="field"><label for="pf-image">Primary image path</label><input id="pf-image" placeholder="/images/products/meridian-steel.svg"></div>
+        <div class="field"><label>Additional image paths (up to 4)</label>
+          <input id="pf-gallery-0" placeholder="/images/products/meridian-steel-2.svg">
+          <input id="pf-gallery-1" placeholder="/images/products/meridian-steel-3.svg">
+          <input id="pf-gallery-2" placeholder="/images/products/meridian-steel-4.svg">
+          <input id="pf-gallery-3" placeholder="/images/products/meridian-steel-5.svg">
+        </div>
+        <div class="field"><label for="pf-desc">Description</label><textarea id="pf-desc" rows="3"></textarea></div>
+        <div class="check-row">
+          <label><input type="checkbox" id="pf-new"> Mark as New</label>
+          <label><input type="checkbox" id="pf-bestseller"> Mark as Bestseller</label>
+          <label><input type="checkbox" id="pf-active" checked> Active (visible on storefront)</label>
+        </div>
       </div>
-      <div class="field-row">
-        <div class="field"><label for="pf-price">Price (৳)</label><input id="pf-price" type="number" min="0" required></div>
-        <div class="field"><label for="pf-old-price">Old price (optional)</label><input id="pf-old-price" type="number" min="0"></div>
+
+      <div id="seo-panel" class="modal-panel hidden">
+        <div class="seo-layout">
+          <div class="seo-main-column">
+            <div class="seo-card">
+              <div class="section-title">Basic SEO</div>
+              <div class="field"><label for="pf-seo-title">SEO Title</label><input id="pf-seo-title" maxlength="60"><div class="field-meta" id="meta-pf-seo-title"></div></div>
+              <div class="field"><label for="pf-seo-description">Meta Description</label><textarea id="pf-seo-description" rows="3" maxlength="160"></textarea><div class="field-meta" id="meta-pf-seo-description"></div></div>
+              <div class="field-row">
+                <div class="field"><label for="pf-seo-slug">Slug</label><input id="pf-seo-slug"><div class="field-meta" id="meta-pf-seo-slug"></div></div>
+                <div class="field"><label for="pf-canonical">Canonical URL</label><input id="pf-canonical"><div class="field-meta" id="meta-pf-canonical"></div></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label for="pf-seo-focus">Focus Keyword</label><input id="pf-seo-focus"><div class="field-meta" id="meta-pf-seo-focus"></div></div>
+                <div class="field"><label for="pf-seo-secondary">Secondary Keywords</label><input id="pf-seo-secondary"><div class="field-meta" id="meta-pf-seo-secondary"></div></div>
+              </div>
+              <div class="field"><label for="pf-breadcrumb-title">Breadcrumb Title</label><input id="pf-breadcrumb-title"><div class="field-meta" id="meta-pf-breadcrumb-title"></div></div>
+            </div>
+
+            <div class="seo-card">
+              <div class="section-title">Search Appearance</div>
+              <div class="check-row">
+                <label><input type="checkbox" id="pf-index" checked> Index</label>
+                <label><input type="checkbox" id="pf-noindex"> Noindex</label>
+                <label><input type="checkbox" id="pf-follow" checked> Follow</label>
+                <label><input type="checkbox" id="pf-nofollow"> Nofollow</label>
+              </div>
+              <div class="field-row">
+                <div class="field"><label for="pf-priority">Priority</label><input id="pf-priority" value="0.7"></div>
+                <div class="field"><label for="pf-change-frequency">Change Frequency</label><input id="pf-change-frequency" value="monthly"></div>
+              </div>
+            </div>
+
+            <div class="seo-card">
+              <div class="section-title">Open Graph</div>
+              <div class="field-row">
+                <div class="field"><label for="pf-og-title">OG Title</label><input id="pf-og-title"><div class="field-meta" id="meta-pf-og-title"></div></div>
+                <div class="field"><label for="pf-og-image">OG Image</label><input id="pf-og-image"><div class="field-meta" id="meta-pf-og-image"></div></div>
+              </div>
+              <div class="field"><label for="pf-og-description">OG Description</label><textarea id="pf-og-description" rows="2"></textarea><div class="field-meta" id="meta-pf-og-description"></div></div>
+              <div class="preview-box" id="pf-facebook-preview"></div>
+            </div>
+
+            <div class="seo-card">
+              <div class="section-title">Twitter</div>
+              <div class="field-row">
+                <div class="field"><label for="pf-twitter-title">Twitter Title</label><input id="pf-twitter-title"><div class="field-meta" id="meta-pf-twitter-title"></div></div>
+                <div class="field"><label for="pf-twitter-image">Twitter Image</label><input id="pf-twitter-image"><div class="field-meta" id="meta-pf-twitter-image"></div></div>
+              </div>
+              <div class="field"><label for="pf-twitter-description">Twitter Description</label><textarea id="pf-twitter-description" rows="2"></textarea><div class="field-meta" id="meta-pf-twitter-description"></div></div>
+              <div class="field"><label for="pf-twitter-card">Twitter Card</label><input id="pf-twitter-card" value="summary"></div>
+              <div class="preview-box" id="pf-twitter-preview"></div>
+            </div>
+
+            <div class="seo-card">
+              <div class="section-title">Schema</div>
+              <div class="field">
+                <label for="pf-schema-type">Schema Type</label>
+                <select id="pf-schema-type">
+                  <option>Product</option><option>Article</option><option>FAQ</option><option>Review</option><option>Organization</option><option>Website</option><option>Breadcrumb</option><option>Service</option><option>Course</option><option>Book</option><option>Video</option><option>Local Business</option><option>Person</option><option>Custom</option>
+                </select>
+              </div>
+              <div class="field"><label for="pf-schema-json">JSON-LD</label><textarea id="pf-schema-json" rows="6"></textarea></div>
+              <div class="schema-actions">
+                <button type="button" class="btn btn-outline btn-sm" id="pf-copy-json">Copy JSON</button>
+                <button type="button" class="btn btn-outline btn-sm" id="pf-download-json">Download JSON</button>
+                <button type="button" class="btn btn-outline btn-sm" id="pf-toggle-json">Collapse</button>
+              </div>
+              <pre id="pf-jsonld-viewer" class="json-viewer"></pre>
+              <div id="pf-schema-validation" class="schema-status">Validating schema…</div>
+            </div>
+
+            <div class="seo-card">
+              <div class="section-title">Image SEO</div>
+              <div class="field-row">
+                <div class="field"><label for="pf-image-alt">Image ALT</label><input id="pf-image-alt"><div class="field-meta" id="meta-pf-image-alt"></div></div>
+                <div class="field"><label for="pf-image-title">Image Title</label><input id="pf-image-title"><div class="field-meta" id="meta-pf-image-title"></div></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label for="pf-image-caption">Caption</label><input id="pf-image-caption"><div class="field-meta" id="meta-pf-image-caption"></div></div>
+                <div class="field"><label for="pf-image-filename">Filename</label><input id="pf-image-filename"><div class="field-meta" id="meta-pf-image-filename"></div></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label for="pf-image-status">Image Optimization Status</label><input id="pf-image-status" value="Ready"></div>
+                <div class="field"><label for="pf-compression-status">Compression Status</label><input id="pf-compression-status" value="Optimized"></div>
+              </div>
+            </div>
+
+            <div class="seo-card">
+              <div class="section-title">AI SEO</div>
+              <div class="ai-actions">
+                <button type="button" class="btn btn-outline btn-sm" id="pf-ai-title">Generate SEO Title</button>
+                <button type="button" class="btn btn-outline btn-sm" id="pf-ai-meta">Generate Meta Description</button>
+                <button type="button" class="btn btn-outline btn-sm" id="pf-ai-keywords">Generate Keywords</button>
+                <button type="button" class="btn btn-outline btn-sm" id="pf-ai-faq">Generate FAQ</button>
+                <button type="button" class="btn btn-outline btn-sm" id="pf-ai-schema">Generate Schema</button>
+                <button type="button" class="btn btn-outline btn-sm" id="pf-ai-readability">Improve Readability</button>
+                <button type="button" class="btn btn-outline btn-sm" id="pf-ai-links">Suggest Internal Links</button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="seo-analysis-card">
+            <div class="analysis-head">
+              <h4>Live SEO Health</h4>
+              <div class="analysis-score" id="pf-analysis-score">0 / 100</div>
+            </div>
+            <div class="score-ring" id="pf-score-ring">
+              <div class="score-ring-inner">
+                <div class="score-ring-value" id="pf-score-value">0</div>
+                <div class="score-ring-label">On-Page Score</div>
+              </div>
+            </div>
+            <div class="score-status" id="pf-score-status">Poor</div>
+            <div class="health-metrics">
+              <div class="health-metric"><span>Readability</span><strong id="pf-readability-score-display">—</strong></div>
+              <div class="health-metric"><span>Density</span><strong id="pf-density-score-display">—</strong></div>
+              <div class="health-metric"><span>Schema</span><strong id="pf-schema-score-display">—</strong></div>
+              <div class="health-metric"><span>Rich Result</span><strong id="pf-rich-result-display">—</strong></div>
+            </div>
+            <div class="analysis-summary" id="pf-analysis-summary">Analyzing the live product content…</div>
+            <div class="health-section">
+              <div class="section-title">SEO Checklist</div>
+              <div class="checklist-list" id="pf-checklist"></div>
+            </div>
+            <div class="health-section">
+              <div class="section-title">Recommendations</div>
+              <div class="recommendation-list" id="pf-recommendations"></div>
+            </div>
+            <div class="preview-box"><strong>Google Search Preview</strong><div id="pf-serp-preview"></div></div>
+            <div class="preview-box"><strong>Facebook Preview</strong><div id="pf-facebook-preview"></div></div>
+            <div class="preview-box"><strong>Twitter Preview</strong><div id="pf-twitter-preview"></div></div>
+          </aside>
+        </div>
+
+        <input type="hidden" id="pf-seo-score">
+        <input type="hidden" id="pf-readability">
+        <input type="hidden" id="pf-keyword-density">
+        <input type="hidden" id="pf-heading-analysis">
+        <input type="hidden" id="pf-content-analysis">
+        <input type="hidden" id="pf-serp-preview-output">
+        <input type="hidden" id="pf-google-preview">
       </div>
-      <div class="field-row">
-        <div class="field"><label for="pf-case">Case size (mm)</label><input id="pf-case" type="number" min="20" max="60"></div>
-        <div class="field"><label for="pf-strap">Strap</label><input id="pf-strap" placeholder="Leather"></div>
-      </div>
-      <div class="field-row">
-        <div class="field"><label for="pf-water">Water resistance</label><input id="pf-water" placeholder="100m"></div>
-        <div class="field"><label for="pf-stock">Stock</label><input id="pf-stock" type="number" min="0" required></div>
-      </div>
-      <div class="field"><label for="pf-image">Image path</label><input id="pf-image" placeholder="/images/products/meridian-steel.svg"></div>
-      <div class="field"><label for="pf-desc">Description</label><textarea id="pf-desc" rows="3"></textarea></div>
-      <div class="check-row">
-        <label><input type="checkbox" id="pf-new"> Mark as New</label>
-        <label><input type="checkbox" id="pf-bestseller"> Mark as Bestseller</label>
-        <label><input type="checkbox" id="pf-active" checked> Active (visible on storefront)</label>
-      </div>
+
       <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Save product</button>
     </form>
   </div>
@@ -92,6 +252,8 @@
 <script>
 AdminAuth.requireAuth();
 let allProducts = [];
+let seoSaveTimer = null;
+let seoAnalysisState = null;
 
 function rowHTML(p) {
   return `
@@ -146,6 +308,474 @@ document.getElementById('p-category-filter').addEventListener('change', applyFil
 const modal = document.getElementById('product-modal');
 const form = document.getElementById('product-form');
 
+function slugify(value) {
+  return String(value || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function buildProductPayload() {
+  return {
+    name: document.getElementById('pf-name').value,
+    category: document.getElementById('pf-category').value,
+    movement: document.getElementById('pf-movement').value,
+    price: Number(document.getElementById('pf-price').value),
+    old_price: document.getElementById('pf-old-price').value ? Number(document.getElementById('pf-old-price').value) : null,
+    rating: document.getElementById('pf-rating').value ? Number(document.getElementById('pf-rating').value) : 4.5,
+    case_mm: Number(document.getElementById('pf-case').value) || null,
+    strap: document.getElementById('pf-strap').value,
+    water_resist: document.getElementById('pf-water').value,
+    stock: Number(document.getElementById('pf-stock').value),
+    image: document.getElementById('pf-image').value,
+    gallery: [
+      document.getElementById('pf-gallery-0').value,
+      document.getElementById('pf-gallery-1').value,
+      document.getElementById('pf-gallery-2').value,
+      document.getElementById('pf-gallery-3').value,
+    ].filter(Boolean),
+    description: document.getElementById('pf-desc').value,
+    is_new: document.getElementById('pf-new').checked,
+    is_bestseller: document.getElementById('pf-bestseller').checked,
+    is_active: document.getElementById('pf-active').checked,
+    seo: {
+      seo_title: document.getElementById('pf-seo-title').value,
+      meta_description: document.getElementById('pf-seo-description').value,
+      slug: document.getElementById('pf-seo-slug').value || slugify(document.getElementById('pf-name').value),
+      canonical_url: document.getElementById('pf-canonical').value,
+      focus_keyword: document.getElementById('pf-seo-focus').value,
+      secondary_keywords: document.getElementById('pf-seo-secondary').value,
+      breadcrumb_title: document.getElementById('pf-breadcrumb-title').value,
+      og_title: document.getElementById('pf-og-title').value,
+      og_description: document.getElementById('pf-og-description').value,
+      og_image: document.getElementById('pf-og-image').value,
+      twitter_title: document.getElementById('pf-twitter-title').value,
+      twitter_description: document.getElementById('pf-twitter-description').value,
+      twitter_image: document.getElementById('pf-twitter-image').value,
+      twitter_card: document.getElementById('pf-twitter-card').value,
+      schema_type: document.getElementById('pf-schema-type').value,
+      schema_json: document.getElementById('pf-schema-json').value,
+      index: document.getElementById('pf-index').checked,
+      noindex: document.getElementById('pf-noindex').checked,
+      follow: document.getElementById('pf-follow').checked,
+      nofollow: document.getElementById('pf-nofollow').checked,
+      priority: document.getElementById('pf-priority').value,
+      change_frequency: document.getElementById('pf-change-frequency').value,
+      seo_score: document.getElementById('pf-seo-score').value,
+      readability: document.getElementById('pf-readability').value,
+      keyword_density: document.getElementById('pf-keyword-density').value,
+      heading_analysis: document.getElementById('pf-heading-analysis').value,
+      content_analysis: document.getElementById('pf-content-analysis').value,
+      serp_preview: document.getElementById('pf-serp-preview-output').value,
+      google_preview: document.getElementById('pf-google-preview').value,
+      image_alt: document.getElementById('pf-image-alt').value,
+      image_title: document.getElementById('pf-image-title').value,
+      image_caption: document.getElementById('pf-image-caption').value,
+      image_filename: document.getElementById('pf-image-filename').value,
+      image_status: document.getElementById('pf-image-status').value,
+      compression_status: document.getElementById('pf-compression-status').value,
+    },
+  };
+}
+
+function updateSeoCounters() {
+  const seoTitle = document.getElementById('pf-seo-title').value || '';
+  const metaDescription = document.getElementById('pf-seo-description').value || '';
+  const slug = document.getElementById('pf-seo-slug').value || slugify(document.getElementById('pf-name').value || '');
+  const focusKeyword = document.getElementById('pf-seo-focus').value || '';
+  document.getElementById('meta-pf-seo-title').textContent = `${seoTitle.length}/60`;
+  document.getElementById('meta-pf-seo-description').textContent = `${metaDescription.length}/160`;
+  document.getElementById('meta-pf-seo-slug').textContent = slug ? `Slug: /${slug}` : 'Slug pending';
+  document.getElementById('meta-pf-seo-focus').textContent = focusKeyword ? `Keyword: ${focusKeyword}` : 'Keyword pending';
+}
+
+function estimateSyllables(word) {
+  const cleaned = String(word).toLowerCase().replace(/[^a-z]/g, '');
+  if (!cleaned) return 0;
+  if (cleaned.length <= 3) return 1;
+  const vowels = cleaned.match(/[aeiouy]+/g) || [];
+  return Math.max(1, vowels.length);
+}
+
+function estimateReadability(text) {
+  const words = String(text || '').trim().split(/\s+/).filter(Boolean);
+  const sentences = String(text || '').split(/[.!?]+/).filter((part) => part.trim().length > 10);
+  const wordCount = words.length || 1;
+  const sentenceCount = sentences.length || 1;
+  const avgSentenceLength = wordCount / sentenceCount;
+  const syllables = words.reduce((total, word) => total + estimateSyllables(word), 0);
+  const avgSyllables = syllables / wordCount;
+  const ease = Math.max(0, Math.min(100, 206.835 - 1.015 * avgSentenceLength - 84.6 * avgSyllables));
+  const passiveCount = (String(text || '').match(/\b(was|were|been|being|is|are|be)\b/gi) || []).length;
+  const transitionCount = (String(text || '').match(/\b(first|second|third|however|therefore|because|while|although|moreover|furthermore|finally|overall)\b/gi) || []).length;
+  const bulletCount = (String(text || '').match(/(^|\s)[•\-]\s+/gm) || []).length;
+  const headingCount = (String(text || '').match(/\b(h1|h2|h3)\b/gi) || []).length;
+  let status = 'Poor';
+  if (ease >= 70 && passiveCount <= 2 && transitionCount >= 2) status = 'Excellent';
+  else if (ease >= 50 && passiveCount <= 4) status = 'Good';
+  else if (ease >= 30) status = 'Needs Improvement';
+  return { ease: Math.round(ease), sentenceLength: Math.round(avgSentenceLength), passiveCount, transitionCount, headingCount, bulletCount, status };
+}
+
+function buildSchemaJson() {
+  const title = document.getElementById('pf-seo-title').value || document.getElementById('pf-name').value || 'Product';
+  const desc = document.getElementById('pf-desc').value || document.getElementById('pf-seo-description').value || '';
+  const image = document.getElementById('pf-image').value || '';
+  const price = Number(document.getElementById('pf-price').value || 0);
+  const stock = Number(document.getElementById('pf-stock').value || 0);
+  const rating = Number(document.getElementById('pf-rating').value || 0);
+  const sku = document.getElementById('pf-id').value || '';
+  const slug = document.getElementById('pf-seo-slug').value || slugify(document.getElementById('pf-name').value || '');
+  const location = window.location.origin;
+  const canon = document.getElementById('pf-canonical').value || `${location}/${slug}`;
+  const schemaType = document.getElementById('pf-schema-type').value || 'Product';
+  const customValue = document.getElementById('pf-schema-json').value || '';
+  if (schemaType === 'Custom' && customValue.trim()) {
+    try { return JSON.parse(customValue); } catch (err) { return { error: err.message }; }
+  }
+  switch (schemaType) {
+    case 'Organization':
+      return { '@context': 'https://schema.org', '@type': 'Organization', name: 'Sohoz Shop BD', url: location, logo: `${location}/images/site/logo.svg` };
+    case 'Website':
+      return { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Sohoz Shop BD', url: location };
+    case 'Breadcrumb':
+      return { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Shop', item: `${location}/shop` }, { '@type': 'ListItem', position: 2, name: title, item: canon }] };
+    case 'Review':
+      return { '@context': 'https://schema.org', '@type': 'Review', itemReviewed: { '@type': 'Product', name: title }, reviewRating: { '@type': 'Rating', ratingValue: rating || 4.5, bestRating: 5 }, author: { '@type': 'Person', name: 'Customer' } };
+    case 'FAQ':
+      return { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [{ '@type': 'Question', name: `Is ${title} available?`, acceptedAnswer: { '@type': 'Answer', text: `${title} is available in our current catalog.` } }] };
+    case 'Article':
+      return { '@context': 'https://schema.org', '@type': 'Article', headline: title, description: desc, author: { '@type': 'Person', name: 'Sohoz Shop BD' }, datePublished: new Date().toISOString().slice(0, 10) };
+    case 'Local Business':
+      return { '@context': 'https://schema.org', '@type': 'LocalBusiness', name: 'Sohoz Shop BD', url: location, telephone: '+8801700000000' };
+    case 'Service':
+      return { '@context': 'https://schema.org', '@type': 'Service', name: title, provider: { '@type': 'Organization', name: 'Sohoz Shop BD' }, areaServed: 'BD' };
+    case 'Video':
+      return { '@context': 'https://schema.org', '@type': 'VideoObject', name: title, description: desc, thumbnailUrl: image || `${location}/images/site/logo.svg` };
+    case 'Course':
+      return { '@context': 'https://schema.org', '@type': 'Course', name: title, provider: { '@type': 'Organization', name: 'Sohoz Shop BD' } };
+    case 'Book':
+      return { '@context': 'https://schema.org', '@type': 'Book', name: title, author: { '@type': 'Person', name: 'Sohoz Shop BD' } };
+    case 'Person':
+      return { '@context': 'https://schema.org', '@type': 'Person', name: title };
+    case 'Product':
+    default:
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: title,
+        description: desc,
+        image: image ? [image] : [],
+        sku: sku || title,
+        brand: { '@type': 'Brand', name: 'Sohoz Shop BD' },
+        offers: {
+          '@type': 'Offer',
+          priceCurrency: 'BDT',
+          price: price || 0,
+          availability: stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+          url: canon,
+          sku: sku || title,
+        },
+        aggregateRating: rating > 0 ? { '@type': 'AggregateRating', ratingValue: rating, reviewCount: 1, bestRating: 5 } : undefined,
+      };
+  }
+}
+
+function validateSchema(schema, schemaType) {
+  const issues = [];
+  const requiredFields = [];
+  const fieldMap = [];
+  if (schemaType === 'Product') {
+    requiredFields.push(['name', 'Name']);
+    requiredFields.push(['offers.price', 'Price']);
+    requiredFields.push(['offers.availability', 'Availability']);
+    requiredFields.push(['sku', 'SKU']);
+    requiredFields.push(['brand', 'Brand']);
+    requiredFields.push(['offers.url', 'Canonical URL']);
+    requiredFields.push(['image', 'Image']);
+    if (document.getElementById('pf-rating').value) requiredFields.push(['aggregateRating', 'Aggregate Rating']);
+  } else if (schemaType === 'Organization') {
+    requiredFields.push(['name', 'Name']);
+    requiredFields.push(['url', 'URL']);
+    requiredFields.push(['logo', 'Logo']);
+  } else if (schemaType === 'Website') {
+    requiredFields.push(['name', 'Name']);
+    requiredFields.push(['url', 'URL']);
+  } else if (schemaType === 'Breadcrumb') {
+    requiredFields.push(['itemListElement', 'Breadcrumb Items']);
+  } else if (schemaType === 'Review') {
+    requiredFields.push(['itemReviewed', 'Item Reviewed']);
+    requiredFields.push(['reviewRating', 'Review']);
+  } else if (schemaType === 'FAQ') {
+    requiredFields.push(['mainEntity', 'FAQ']);
+  } else if (schemaType === 'Article') {
+    requiredFields.push(['headline', 'Headline']);
+    requiredFields.push(['author', 'Author']);
+  } else if (schemaType === 'Local Business') {
+    requiredFields.push(['name', 'Name']);
+    requiredFields.push(['url', 'URL']);
+    requiredFields.push(['telephone', 'Telephone']);
+  } else if (schemaType === 'Service') {
+    requiredFields.push(['name', 'Name']);
+    requiredFields.push(['provider', 'Provider']);
+  } else if (schemaType === 'Video') {
+    requiredFields.push(['name', 'Name']);
+    requiredFields.push(['thumbnailUrl', 'Thumbnail']);
+  } else if (schemaType === 'Course') {
+    requiredFields.push(['name', 'Name']);
+    requiredFields.push(['provider', 'Provider']);
+  } else if (schemaType === 'Book') {
+    requiredFields.push(['name', 'Name']);
+    requiredFields.push(['author', 'Author']);
+  } else if (schemaType === 'Person') {
+    requiredFields.push(['name', 'Name']);
+  }
+  const getValue = (path) => path.split('.').reduce((acc, key) => acc && acc[key], schema);
+  requiredFields.forEach(([path, label]) => {
+    const value = getValue(path);
+    if (!value || (Array.isArray(value) && value.length === 0)) {
+      issues.push(`Missing ${label}`);
+      fieldMap.push(label);
+    }
+  });
+  if (schemaType === 'Product' && Number(document.getElementById('pf-price').value || 0) <= 0) {
+    issues.push('Price must be greater than zero');
+    fieldMap.push('Price');
+  }
+  if (schemaType === 'Product' && Number(document.getElementById('pf-stock').value || 0) <= 0) {
+    issues.push('Availability should be marked out of stock');
+    fieldMap.push('Availability');
+  }
+  if (schemaType === 'Product' && !document.getElementById('pf-seo-slug').value && !slugify(document.getElementById('pf-name').value || '')) {
+    issues.push('Canonical URL is missing');
+    fieldMap.push('Canonical URL');
+  }
+  return { issues, fieldMap };
+}
+
+function renderSeoAnalysis() {
+  const title = document.getElementById('pf-seo-title').value || document.getElementById('pf-name').value || '';
+  const description = document.getElementById('pf-seo-description').value || document.getElementById('pf-desc').value || '';
+  const keyword = (document.getElementById('pf-seo-focus').value || '').trim();
+  const slug = document.getElementById('pf-seo-slug').value || slugify(document.getElementById('pf-name').value || '');
+  const productDesc = document.getElementById('pf-desc').value || '';
+  const imageAlt = document.getElementById('pf-image-alt').value || '';
+  const imageFilename = document.getElementById('pf-image-filename').value || (document.getElementById('pf-image').value || '').split('/').pop() || '';
+  const canonical = document.getElementById('pf-canonical').value || '';
+  const ogTitle = document.getElementById('pf-og-title').value || '';
+  const ogDescription = document.getElementById('pf-og-description').value || '';
+  const ogImage = document.getElementById('pf-og-image').value || '';
+  const twitterTitle = document.getElementById('pf-twitter-title').value || '';
+  const twitterDescription = document.getElementById('pf-twitter-description').value || '';
+  const twitterImage = document.getElementById('pf-twitter-image').value || '';
+  const readability = estimateReadability(`${title} ${description} ${productDesc}`);
+  const wordCount = (String(`${title} ${description} ${productDesc}`).match(/\b[\w’'-]+\b/g) || []).length;
+  const escapedKeyword = String(keyword).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const keywordCount = (String(`${title} ${description} ${productDesc}`).match(new RegExp(`\\b${escapedKeyword}\\b`, 'gi')) || []).length;
+  const density = wordCount > 0 ? (keywordCount / wordCount) * 100 : 0;
+  const canonicalLength = String(canonical || slug).length;
+  const rules = [];
+
+  const addRule = (label, state, detail) => rules.push({ label, state, detail });
+  addRule('SEO Title exists', title.trim() ? 'pass' : 'failed', title.trim() ? 'Title is present' : 'Add a title');
+  addRule('SEO Title length', title.length >= 50 && title.length <= 60 ? 'pass' : title.length >= 40 ? 'warning' : 'failed', `${title.length} characters`);
+  addRule('Meta description exists', description.trim() ? 'pass' : 'failed', description.trim() ? 'Description is present' : 'Add a meta description');
+  addRule('Meta description length', description.length >= 120 && description.length <= 160 ? 'pass' : description.length >= 90 ? 'warning' : 'failed', `${description.length} characters`);
+  addRule('Focus keyword exists', keyword ? 'pass' : 'failed', keyword ? `Focus keyword: ${keyword}` : 'Add a focus keyword');
+  addRule('Keyword in SEO title', title.toLowerCase().includes(keyword.toLowerCase()) ? 'pass' : keyword ? 'warning' : 'failed', keyword ? 'Add the keyword to the SEO title' : 'No keyword to compare');
+  addRule('Keyword in URL', slug.toLowerCase().includes(keyword.toLowerCase()) ? 'pass' : keyword ? 'warning' : 'failed', keyword ? 'Add the keyword to the slug' : 'No keyword to compare');
+  addRule('Keyword in meta description', description.toLowerCase().includes(keyword.toLowerCase()) ? 'pass' : keyword ? 'warning' : 'failed', keyword ? 'Mention the keyword in the meta description' : 'No keyword to compare');
+  addRule('Keyword in product description', productDesc.toLowerCase().includes(keyword.toLowerCase()) ? 'pass' : keyword ? 'warning' : 'failed', keyword ? 'Mention the keyword in the product description' : 'No keyword to compare');
+  addRule('Keyword density', density >= 1 && density <= 2.5 ? 'pass' : density > 0 ? 'warning' : 'failed', `${density.toFixed(2)}%`);
+  addRule('URL length', canonicalLength <= 75 ? 'pass' : canonicalLength <= 100 ? 'warning' : 'failed', `${canonicalLength} characters`);
+  addRule('Canonical URL', canonical ? 'pass' : 'warning', canonical ? 'Canonical is set' : 'Add a canonical URL');
+  addRule('Open Graph', ogTitle && ogDescription && ogImage ? 'pass' : ogTitle || ogDescription || ogImage ? 'warning' : 'failed', 'Social metadata');
+  addRule('Twitter card', twitterTitle && twitterDescription && twitterImage ? 'pass' : twitterTitle || twitterDescription || twitterImage ? 'warning' : 'failed', 'Twitter metadata');
+  addRule('Product schema', document.getElementById('pf-schema-type').value ? 'pass' : 'warning', 'Schema type selected');
+  addRule('Breadcrumb', document.getElementById('pf-breadcrumb-title').value ? 'pass' : 'warning', 'Breadcrumb title available');
+  addRule('Internal links', /https?:\/\//i.test(description) || /https?:\/\//i.test(productDesc) ? 'warning' : 'warning', 'Add internal links to related products');
+  addRule('External links', /https?:\/\//i.test(description) || /https?:\/\//i.test(productDesc) ? 'pass' : 'warning', 'Add trusted external references when relevant');
+  addRule('Image ALT text', imageAlt ? 'pass' : imageAlt && imageAlt.length ? 'warning' : 'warning', imageAlt ? 'Alt text is present' : 'Add descriptive ALT text');
+  addRule('Image filename', imageFilename ? 'pass' : 'warning', imageFilename ? 'Filename is descriptive' : 'Name the image file clearly');
+  addRule('Heading structure', /h2|h3/i.test(description) || /h2|h3/i.test(productDesc) ? 'pass' : 'warning', 'Add H2 and H3 headings to structure content');
+  addRule('H1', title ? 'pass' : 'failed', 'The page has a clear H1');
+  addRule('H2', /h2/i.test(description) || /h2/i.test(productDesc) ? 'pass' : 'warning', 'Add at least one H2 heading');
+  addRule('H3', /h3/i.test(description) || /h3/i.test(productDesc) ? 'pass' : 'warning', 'Add supporting H3 subheads');
+  addRule('Product brand', document.getElementById('pf-name').value ? 'warning' : 'failed', 'Add a brand association in the product name or schema');
+  addRule('SKU', document.getElementById('pf-id').value ? 'pass' : 'warning', 'SKU is available in the database');
+  addRule('GTIN', document.getElementById('pf-id').value ? 'warning' : 'warning', 'Add GTIN when available');
+  addRule('Product availability', Number(document.getElementById('pf-stock').value || 0) > 0 ? 'pass' : 'warning', `${Number(document.getElementById('pf-stock').value || 0) > 0 ? 'In stock' : 'Stock is low or unavailable'}`);
+  addRule('Product price', Number(document.getElementById('pf-price').value || 0) > 0 ? 'pass' : 'failed', 'Price is present');
+  addRule('HTTPS', window.location.protocol === 'https:' ? 'pass' : 'warning', 'Site is served over HTTPS');
+  addRule('Mobile friendly', 'pass', 'The storefront uses a responsive layout');
+  addRule('Readability', readability.status === 'Excellent' ? 'pass' : readability.status === 'Good' ? 'warning' : 'failed', readability.status);
+
+  const score = Math.max(0, Math.min(100, Math.round(rules.reduce((total, rule) => {
+    if (rule.state === 'pass') return total + 3.2;
+    if (rule.state === 'warning') return total + 1.6;
+    return total;
+  }, 0))));
+  const failedCount = rules.filter((rule) => rule.state === 'failed').length;
+  const warningCount = rules.filter((rule) => rule.state === 'warning').length;
+  const status = score >= 80 ? 'Excellent' : score >= 60 ? 'Good' : score >= 40 ? 'Average' : 'Poor';
+  const statusClass = score >= 80 ? 'excellent' : score >= 60 ? 'good' : score >= 40 ? 'needs-improvement' : 'critical';
+  const summary = `${status}: ${failedCount} failed, ${warningCount} warnings across ${rules.length} on-page checks.`;
+
+  const recommendations = [];
+  if (!keyword) recommendations.push({ text: 'Add a focus keyword to target the product intent', impact: '+8' });
+  if (title.length < 50 || title.length > 60) recommendations.push({ text: 'Adjust the SEO title to match the recommended length', impact: '+7' });
+  if (description.length < 120 || description.length > 160) recommendations.push({ text: 'Refine the meta description to fit the recommended length', impact: '+6' });
+  if (!imageAlt) recommendations.push({ text: 'Add descriptive ALT text to the product image', impact: '+5' });
+  if (!/h2/i.test(description) && !/h2/i.test(productDesc)) recommendations.push({ text: 'Add an H2 heading to improve structure', impact: '+4' });
+  if (density < 1 || density > 2.5) recommendations.push({ text: 'Tune keyword density to the recommended 1–2.5%', impact: '+5' });
+  if (document.getElementById('pf-schema-type').value === 'Product' && (!document.getElementById('pf-schema-json').value || !document.getElementById('pf-schema-json').value.includes('offers'))) recommendations.push({ text: 'Add structured offers data to the schema', impact: '+6' });
+  if (!document.getElementById('pf-seo-slug').value) recommendations.push({ text: 'Create a concise slug that includes the main keyword', impact: '+4' });
+  if (!document.getElementById('pf-breadcrumb-title').value) recommendations.push({ text: 'Add a breadcrumb title for clearer navigation', impact: '+3' });
+  if (!document.getElementById('pf-og-title').value || !document.getElementById('pf-og-description').value) recommendations.push({ text: 'Complete the Open Graph metadata for social sharing', impact: '+4' });
+  if (!document.getElementById('pf-twitter-title').value || !document.getElementById('pf-twitter-description').value) recommendations.push({ text: 'Add Twitter metadata for richer sharing previews', impact: '+3' });
+  if (recommendations.length === 0) recommendations.push({ text: 'The page is well optimized. Keep the content fresh and add reviews', impact: '+2' });
+
+  const schema = buildSchemaJson();
+  const schemaValidation = validateSchema(schema, document.getElementById('pf-schema-type').value || 'Product');
+  const schemaStatus = schemaValidation.issues.length === 0 ? 'valid' : schemaValidation.issues.length <= 2 ? 'warning' : 'invalid';
+  const schemaMessage = schemaStatus === 'valid' ? 'Eligible for Google rich results' : schemaStatus === 'warning' ? `Warning: ${schemaValidation.issues.join(', ')}` : `Invalid schema: ${schemaValidation.issues.join(', ')}`;
+  const richResultStatus = schemaStatus === 'valid' ? 'Eligible' : schemaStatus === 'warning' ? 'Warning' : 'Invalid';
+
+  document.getElementById('pf-seo-score').value = score;
+  document.getElementById('pf-readability').value = readability.ease;
+  document.getElementById('pf-keyword-density').value = density.toFixed(2);
+  document.getElementById('pf-analysis-score').textContent = `${score} / 100`;
+  document.getElementById('pf-analysis-score').className = `analysis-score ${statusClass}`;
+  document.getElementById('pf-score-value').textContent = score;
+  document.getElementById('pf-score-ring').style.background = `conic-gradient(${score >= 80 ? 'var(--pine)' : score >= 60 ? '#C79E4A' : score >= 40 ? '#B8862F' : 'var(--danger)'} ${score * 3.6}deg, var(--line) 0deg)`;
+  document.getElementById('pf-score-status').textContent = status;
+  document.getElementById('pf-analysis-summary').textContent = summary;
+  document.getElementById('pf-readability-score-display').textContent = `${readability.ease} / 100`;
+  document.getElementById('pf-density-score-display').textContent = `${density.toFixed(2)}%`;
+  document.getElementById('pf-schema-score-display').textContent = richResultStatus;
+  document.getElementById('pf-rich-result-display').textContent = schemaStatus === 'valid' ? 'Eligible' : schemaStatus === 'warning' ? 'Warning' : 'Invalid';
+  document.getElementById('pf-checklist').innerHTML = rules.map((rule) => `<div class="checklist-item ${rule.state}"><div><strong>${rule.label}</strong><div>${rule.detail}</div></div><span>${rule.state === 'pass' ? 'Pass' : rule.state === 'warning' ? 'Warning' : 'Failed'}</span></div>`).join('');
+  document.getElementById('pf-recommendations').innerHTML = recommendations.map((item) => `<div class="recommendation-item"><div>${item.text}</div><div class="recommendation-impact">Estimated improvement ${item.impact}</div></div>`).join('');
+  const previewTitle = title || 'Product title';
+  const previewDesc = description || 'Add a compelling meta description';
+  const serpHtml = `<strong>${previewTitle}</strong><div>${slug ? `/${slug}` : '/slug'}</div><div>${previewDesc}</div>`;
+  document.getElementById('pf-serp-preview').innerHTML = serpHtml;
+  document.getElementById('pf-serp-preview-output').value = serpHtml;
+  document.getElementById('pf-facebook-preview').innerHTML = `<strong>${ogTitle || previewTitle}</strong><div>${ogDescription || previewDesc}</div>`;
+  document.getElementById('pf-twitter-preview').innerHTML = `<strong>${twitterTitle || previewTitle}</strong><div>${twitterDescription || previewDesc}</div>`;
+  document.getElementById('pf-google-preview').value = `${previewTitle} — ${previewDesc}`;
+  document.getElementById('pf-jsonld-viewer').textContent = JSON.stringify(schema, null, 2);
+  document.getElementById('pf-schema-validation').className = `schema-status ${schemaStatus}`;
+  document.getElementById('pf-schema-validation').textContent = schemaMessage;
+  document.querySelectorAll('.field-warning, .field-error').forEach((element) => element.classList.remove('field-warning', 'field-error'));
+  schemaValidation.fieldMap.forEach((fieldName) => {
+    const target = {
+      Price: 'pf-price',
+      Availability: 'pf-stock',
+      'Canonical URL': 'pf-canonical',
+      SKU: 'pf-id',
+      Brand: 'pf-name',
+      Image: 'pf-image',
+      'Aggregate Rating': 'pf-rating',
+      'Breadcrumb Items': 'pf-breadcrumb-title',
+      'Item Reviewed': 'pf-name',
+      Review: 'pf-rating',
+      FAQ: 'pf-schema-json',
+      Headline: 'pf-seo-title',
+      Author: 'pf-seo-title',
+      Name: 'pf-name',
+      URL: 'pf-canonical',
+      Logo: 'pf-image',
+      Telephone: 'pf-water',
+      Provider: 'pf-name',
+      Thumbnail: 'pf-image',
+    }[fieldName];
+    if (target) {
+      const element = document.getElementById(target);
+      if (element) element.classList.add('field-error');
+    }
+  });
+  seoAnalysisState = { score, status, schemaStatus, recommendations, rules, readability, density, schema };
+}
+
+function scheduleSeoSync() {
+  updateSeoCounters();
+  renderSeoAnalysis();
+  if (!document.getElementById('pf-id').value) return;
+  if (seoSaveTimer) clearTimeout(seoSaveTimer);
+  seoSaveTimer = setTimeout(async () => {
+    try {
+      await adminFetch(`/api/products/${document.getElementById('pf-id').value}`, { method: 'PUT', body: JSON.stringify(buildProductPayload()) });
+    } catch (err) {
+      showToast(err.message, true);
+    }
+  }, 700);
+}
+
+function fillAiSuggestion(id, value) {
+  const element = document.getElementById(id);
+  if (element) element.value = value;
+}
+
+function attachSeoListeners() {
+  const seoFields = ['pf-name','pf-desc','pf-seo-title','pf-seo-description','pf-seo-slug','pf-seo-focus','pf-seo-secondary','pf-canonical','pf-breadcrumb-title','pf-og-title','pf-og-description','pf-og-image','pf-twitter-title','pf-twitter-description','pf-twitter-image','pf-twitter-card','pf-schema-type','pf-schema-json','pf-image-alt','pf-image-title','pf-image-caption','pf-image-filename','pf-image-status','pf-compression-status','pf-priority','pf-change-frequency','pf-price','pf-stock','pf-rating'];
+  seoFields.forEach((id) => {
+    const element = document.getElementById(id);
+    if (!element) return;
+    element.addEventListener('input', scheduleSeoSync);
+    element.addEventListener('change', scheduleSeoSync);
+  });
+
+  document.getElementById('pf-copy-json').addEventListener('click', async () => {
+    const json = document.getElementById('pf-jsonld-viewer').textContent;
+    try { await navigator.clipboard.writeText(json); showToast('JSON-LD copied'); } catch (err) { showToast('Copy failed', true); }
+  });
+  document.getElementById('pf-download-json').addEventListener('click', () => {
+    const blob = new Blob([document.getElementById('pf-jsonld-viewer').textContent], { type: 'application/json' });
+    const href = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = 'schema.jsonld';
+    link.click();
+    URL.revokeObjectURL(href);
+  });
+  document.getElementById('pf-toggle-json').addEventListener('click', () => {
+    const viewer = document.getElementById('pf-jsonld-viewer');
+    viewer.classList.toggle('collapsed');
+    document.getElementById('pf-toggle-json').textContent = viewer.classList.contains('collapsed') ? 'Expand' : 'Collapse';
+  });
+
+  document.getElementById('pf-ai-title').addEventListener('click', () => {
+    const title = `${document.getElementById('pf-name').value || 'Premium watch'} — ${document.getElementById('pf-category').value || 'Luxury timepiece'}`;
+    fillAiSuggestion('pf-seo-title', title.slice(0, 60));
+    scheduleSeoSync();
+  });
+  document.getElementById('pf-ai-meta').addEventListener('click', () => {
+    const meta = `${document.getElementById('pf-desc').value || 'Premium craftsmanship'} Discover the ${document.getElementById('pf-name').value || 'watch'} with refined design and precision engineering.`;
+    fillAiSuggestion('pf-seo-description', meta.slice(0, 160));
+    scheduleSeoSync();
+  });
+  document.getElementById('pf-ai-keywords').addEventListener('click', () => {
+    const keyword = document.getElementById('pf-seo-focus').value || `${document.getElementById('pf-category').value || 'luxury'} ${document.getElementById('pf-name').value || 'watch'}`;
+    fillAiSuggestion('pf-seo-focus', keyword.slice(0, 60));
+    fillAiSuggestion('pf-seo-secondary', `${keyword} craftsmanship`);
+    scheduleSeoSync();
+  });
+  document.getElementById('pf-ai-faq').addEventListener('click', () => {
+    fillAiSuggestion('pf-schema-json', '{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is this watch authentic?","acceptedAnswer":{"@type":"Answer","text":"Yes, it is sourced through our authorized collection."}}]}');
+    scheduleSeoSync();
+  });
+  document.getElementById('pf-ai-schema').addEventListener('click', () => {
+    fillAiSuggestion('pf-schema-json', '{"@context":"https://schema.org","@type":"Product","name":"'+(document.getElementById('pf-name').value || 'Watch')+'","offers":{"@type":"Offer","priceCurrency":"BDT","price":"'+(document.getElementById('pf-price').value || '0')+'"}}');
+    scheduleSeoSync();
+  });
+  document.getElementById('pf-ai-readability').addEventListener('click', () => {
+    fillAiSuggestion('pf-seo-description', `${document.getElementById('pf-seo-description').value || ''} Crafted for modern wearers, this piece blends comfort, durability, and timeless style.`.slice(0, 160));
+    scheduleSeoSync();
+  });
+  document.getElementById('pf-ai-links').addEventListener('click', () => {
+    fillAiSuggestion('pf-content-analysis', 'Suggested internal links: Shop collection, compare watches, care guide.');
+    scheduleSeoSync();
+  });
+}
+
 function openModal(product) {
   form.reset();
   document.getElementById('modal-title').textContent = product ? `Edit ${product.sku}` : 'New product';
@@ -155,15 +785,60 @@ function openModal(product) {
   document.getElementById('pf-movement').value = product ? product.movement : '';
   document.getElementById('pf-price').value = product ? product.price : '';
   document.getElementById('pf-old-price').value = product && product.old_price ? product.old_price : '';
+  document.getElementById('pf-rating').value = product ? product.rating : '4.5';
   document.getElementById('pf-case').value = product ? product.case_mm : '';
   document.getElementById('pf-strap').value = product ? product.strap : '';
   document.getElementById('pf-water').value = product ? product.water_resist : '';
   document.getElementById('pf-stock').value = product ? product.stock : 0;
   document.getElementById('pf-image').value = product ? product.image : '/images/products/meridian-steel.svg';
+  const gallery = product && Array.isArray(product.gallery) ? product.gallery : [];
+  document.getElementById('pf-gallery-0').value = gallery[0] || '';
+  document.getElementById('pf-gallery-1').value = gallery[1] || '';
+  document.getElementById('pf-gallery-2').value = gallery[2] || '';
+  document.getElementById('pf-gallery-3').value = gallery[3] || '';
   document.getElementById('pf-desc').value = product ? product.description : '';
   document.getElementById('pf-new').checked = product ? !!product.is_new : false;
   document.getElementById('pf-bestseller').checked = product ? !!product.is_bestseller : false;
   document.getElementById('pf-active').checked = product ? !!product.is_active : true;
+  document.getElementById('pf-seo-title').value = product && product.seo ? product.seo.seo_title || '' : '';
+  document.getElementById('pf-seo-description').value = product && product.seo ? product.seo.meta_description || '' : '';
+  document.getElementById('pf-seo-slug').value = product && product.seo ? product.seo.slug || product.slug || '' : '';
+  document.getElementById('pf-canonical').value = product && product.seo ? product.seo.canonical_url || '' : '';
+  document.getElementById('pf-seo-focus').value = product && product.seo ? product.seo.focus_keyword || '' : '';
+  document.getElementById('pf-seo-secondary').value = product && product.seo ? product.seo.secondary_keywords || '' : '';
+  document.getElementById('pf-breadcrumb-title').value = product && product.seo ? product.seo.breadcrumb_title || '' : '';
+  document.getElementById('pf-og-title').value = product && product.seo ? product.seo.og_title || '' : '';
+  document.getElementById('pf-og-description').value = product && product.seo ? product.seo.og_description || '' : '';
+  document.getElementById('pf-og-image').value = product && product.seo ? product.seo.og_image || '' : '';
+  document.getElementById('pf-twitter-title').value = product && product.seo ? product.seo.twitter_title || '' : '';
+  document.getElementById('pf-twitter-description').value = product && product.seo ? product.seo.twitter_description || '' : '';
+  document.getElementById('pf-twitter-image').value = product && product.seo ? product.seo.twitter_image || '' : '';
+  document.getElementById('pf-twitter-card').value = product && product.seo ? product.seo.twitter_card || 'summary' : 'summary';
+  document.getElementById('pf-schema-type').value = product && product.seo ? product.seo.schema_type || 'Product' : 'Product';
+  document.getElementById('pf-schema-json').value = product && product.seo ? product.seo.schema_json || '' : '';
+  document.getElementById('pf-priority').value = product && product.seo ? product.seo.priority || '0.7' : '0.7';
+  document.getElementById('pf-change-frequency').value = product && product.seo ? product.seo.change_frequency || 'monthly' : 'monthly';
+  document.getElementById('pf-seo-score').value = product && product.seo ? product.seo.seo_score || 0 : 0;
+  document.getElementById('pf-readability').value = product && product.seo ? product.seo.readability || 0 : 0;
+  document.getElementById('pf-keyword-density').value = product && product.seo ? product.seo.keyword_density || 0 : 0;
+  document.getElementById('pf-heading-analysis').value = product && product.seo ? product.seo.heading_analysis || '' : '';
+  document.getElementById('pf-content-analysis').value = product && product.seo ? product.seo.content_analysis || '' : '';
+  document.getElementById('pf-image-alt').value = product && product.seo ? product.seo.image_alt || '' : '';
+  document.getElementById('pf-image-title').value = product && product.seo ? product.seo.image_title || '' : '';
+  document.getElementById('pf-image-caption').value = product && product.seo ? product.seo.image_caption || '' : '';
+  document.getElementById('pf-image-filename').value = product && product.seo ? product.seo.image_filename || '' : '';
+  document.getElementById('pf-image-status').value = product && product.seo ? product.seo.image_status || 'Ready' : 'Ready';
+  document.getElementById('pf-compression-status').value = product && product.seo ? product.seo.compression_status || 'Optimized' : 'Optimized';
+  document.getElementById('pf-serp-preview-output').value = product && product.seo ? product.seo.serp_preview || '' : '';
+  document.getElementById('pf-google-preview').value = product && product.seo ? product.seo.google_preview || '' : '';
+  document.getElementById('pf-index').checked = product && product.seo ? product.seo.index_status !== 0 : true;
+  document.getElementById('pf-noindex').checked = product && product.seo ? !!product.seo.noindex : false;
+  document.getElementById('pf-follow').checked = product && product.seo ? product.seo.follow !== 0 : true;
+  document.getElementById('pf-nofollow').checked = product && product.seo ? !!product.seo.nofollow : false;
+  updateSeoCounters();
+  renderSeoAnalysis();
+  document.querySelectorAll('.modal-tab').forEach((btn) => btn.classList.toggle('active', btn.dataset.target === 'product-panel'));
+  document.querySelectorAll('.modal-panel').forEach((panel) => panel.classList.toggle('hidden', panel.id !== 'product-panel'));
   modal.classList.remove('hidden');
 }
 document.getElementById('new-product-btn').addEventListener('click', () => openModal(null));
@@ -173,22 +848,7 @@ modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const id = document.getElementById('pf-id').value;
-  const payload = {
-    name: document.getElementById('pf-name').value,
-    category: document.getElementById('pf-category').value,
-    movement: document.getElementById('pf-movement').value,
-    price: Number(document.getElementById('pf-price').value),
-    old_price: document.getElementById('pf-old-price').value ? Number(document.getElementById('pf-old-price').value) : null,
-    case_mm: Number(document.getElementById('pf-case').value) || null,
-    strap: document.getElementById('pf-strap').value,
-    water_resist: document.getElementById('pf-water').value,
-    stock: Number(document.getElementById('pf-stock').value),
-    image: document.getElementById('pf-image').value,
-    description: document.getElementById('pf-desc').value,
-    is_new: document.getElementById('pf-new').checked,
-    is_bestseller: document.getElementById('pf-bestseller').checked,
-    is_active: document.getElementById('pf-active').checked,
-  };
+  const payload = buildProductPayload();
   try {
     if (id) await adminFetch(`/api/products/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
     else await adminFetch('/api/products', { method: 'POST', body: JSON.stringify(payload) });
@@ -199,6 +859,19 @@ form.addEventListener('submit', async (e) => {
     showToast(err.message, true);
   }
 });
+
+document.querySelectorAll('.modal-tab').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.modal-tab').forEach((tab) => tab.classList.toggle('active', tab === btn));
+    document.querySelectorAll('.modal-panel').forEach((panel) => panel.classList.toggle('hidden', panel.id !== btn.dataset.target));
+    if (btn.dataset.target === 'seo-panel') {
+      updateSeoCounters();
+      renderSeoAnalysis();
+    }
+  });
+});
+
+attachSeoListeners();
 
 document.getElementById('products-body').addEventListener('click', (e) => {
   const editBtn = e.target.closest('[data-edit]');

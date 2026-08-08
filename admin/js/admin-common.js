@@ -43,6 +43,14 @@ function showToast(message, isError) {
 function fmtBDT(n) { return '৳' + Number(n || 0).toLocaleString('en-US'); }
 function fmtDate(s) { return new Date(s.replace(' ', 'T') + 'Z').toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); }
 
+if (typeof window !== 'undefined') {
+  window.AdminAuth = AdminAuth;
+  window.adminFetch = adminFetch;
+  window.showToast = showToast;
+  window.fmtBDT = fmtBDT;
+  window.fmtDate = fmtDate;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const who = document.getElementById('admin-who');
   const admin = AdminAuth.admin();

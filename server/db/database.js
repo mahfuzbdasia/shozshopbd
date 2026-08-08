@@ -51,6 +51,8 @@ CREATE TABLE IF NOT EXISTS orders (
   customer_phone TEXT,
   shipping_address TEXT,
   city TEXT,
+  delivery_district TEXT,
+  delivery_charge INTEGER DEFAULT 0,
   latitude REAL,
   longitude REAL,
   place_id TEXT,
@@ -120,10 +122,107 @@ CREATE TABLE IF NOT EXISTS settings (
   value TEXT NOT NULL,
   updated_at TEXT DEFAULT (datetime('now'))
 );
+
+CREATE TABLE IF NOT EXISTS seo_meta (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  entity_type TEXT NOT NULL,
+  entity_id TEXT NOT NULL,
+  entity_slug TEXT,
+  seo_title TEXT,
+  meta_description TEXT,
+  slug TEXT,
+  canonical_url TEXT,
+  focus_keyword TEXT,
+  secondary_keywords TEXT,
+  breadcrumb_title TEXT,
+  og_title TEXT,
+  og_description TEXT,
+  og_image TEXT,
+  twitter_title TEXT,
+  twitter_description TEXT,
+  twitter_image TEXT,
+  twitter_card TEXT,
+  schema_type TEXT,
+  schema_json TEXT,
+  image_alt TEXT,
+  image_title TEXT,
+  image_caption TEXT,
+  image_filename TEXT,
+  image_status TEXT,
+  compression_status TEXT,
+  index_status INTEGER DEFAULT 1,
+  noindex INTEGER DEFAULT 0,
+  follow INTEGER DEFAULT 1,
+  nofollow INTEGER DEFAULT 0,
+  priority TEXT DEFAULT '0.7',
+  change_frequency TEXT DEFAULT 'monthly',
+  ai_generated INTEGER DEFAULT 0,
+  seo_score INTEGER DEFAULT 0,
+  readability INTEGER DEFAULT 0,
+  keyword_density INTEGER DEFAULT 0,
+  heading_analysis TEXT,
+  internal_links INTEGER DEFAULT 0,
+  external_links INTEGER DEFAULT 0,
+  broken_links INTEGER DEFAULT 0,
+  content_analysis TEXT,
+  serp_preview TEXT,
+  google_preview TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS seo_schema_blocks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  entity_type TEXT NOT NULL,
+  entity_id TEXT NOT NULL,
+  schema_type TEXT,
+  schema_json TEXT NOT NULL,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS seo_redirects (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  source TEXT NOT NULL,
+  target TEXT NOT NULL,
+  status_code INTEGER DEFAULT 301,
+  redirect_type TEXT DEFAULT 'manual',
+  created_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS seo_404_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  url TEXT UNIQUE NOT NULL,
+  hits INTEGER DEFAULT 1,
+  referrer TEXT,
+  last_seen_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS seo_settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL,
+  updated_at TEXT DEFAULT (datetime('now'))
+);
 `);
 
 try { db.exec("ALTER TABLE products ADD COLUMN gallery_json TEXT DEFAULT '[]'"); } catch (err) { /* existing databases already have the column */ }
-for (const column of ['latitude REAL', 'longitude REAL', 'place_id TEXT', 'formatted_address TEXT', 'postal_code TEXT', 'division TEXT', 'country TEXT']) {
+for (const column of [
+  'breadcrumb_title TEXT',
+  'og_image TEXT',
+  'twitter_title TEXT',
+  'twitter_description TEXT',
+  'twitter_image TEXT',
+  'schema_json TEXT',
+  'image_alt TEXT',
+  'image_title TEXT',
+  'image_caption TEXT',
+  'image_filename TEXT',
+  'image_status TEXT',
+  'compression_status TEXT'
+]) {
+  try { db.exec(`ALTER TABLE seo_meta ADD COLUMN ${column}`); } catch (err) { /* existing databases already have the column */ }
+}
+for (const column of ['delivery_district TEXT', 'delivery_charge INTEGER DEFAULT 0', 'latitude REAL', 'longitude REAL', 'place_id TEXT', 'formatted_address TEXT', 'postal_code TEXT', 'division TEXT', 'country TEXT']) {
   try { db.exec(`ALTER TABLE orders ADD COLUMN ${column}`); } catch (err) { /* existing databases already have the column */ }
 }
 try { db.exec('ALTER TABLE orders ADD COLUMN google_maps_url TEXT'); } catch (err) { /* existing databases already have the column */ }
